@@ -1,0 +1,299 @@
+nico@home:~$ sudo docker exec -it edvai_hadoop basg
+[sudo] password for nico: 
+OCI runtime exec failed: exec failed: unable to start container process: exec: "basg": executable file not found in $PATH: unknown
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+root@7e7bdeaf0621:/# su hadoop
+hadoop@7e7bdeaf0621:/$ hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/hadoop/hive/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/hadoop/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+
+Logging initialized using configuration in jar:file:/home/hadoop/hive/lib/hive-common-2.3.9.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.hadoop.hive.common.StringInternUtils (file:/home/hadoop/hive/lib/hive-common-2.3.9.jar) to field java.net.URI.string
+WARNING: Please consider reporting this to the maintainers of org.apache.hadoop.hive.common.StringInternUtils
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+hive> show databases;
+OK
+default
+tripdata
+Time taken: 4.784 seconds, Fetched: 2 row(s)
+hive> use tripdata
+    > ;
+OK
+Time taken: 0.087 seconds
+hive> show tables;
+OK
+tripdata_table
+Time taken: 0.112 seconds, Fetched: 1 row(s)
+hive> select * from tripdata_tables
+    > ;
+FAILED: SemanticException [Error 10001]: Line 1:14 Table not found 'tripdata_tables'
+hive> select 
+    > 
+    > * from tripdata_table limit 10;
+OK
+Time taken: 5.545 seconds
+hive> create database tripsdb
+    > ;
+OK
+Time taken: 3.548 seconds
+hive> show databases;
+OK
+default
+tripdata
+tripsdb
+Time taken: 0.078 seconds, Fetched: 3 row(s)
+hive> use tripsdb
+    > ;
+OK
+Time taken: 0.146 seconds
+hive> create external table trips(tpep_pickup_datetime date, passenger_count int, trip_distance float)
+    > row format delimited
+    > fields terminated by ','
+    > location '/tables/external/tripsdb';
+OK
+Time taken: 0.669 seconds
+hive> describe trips
+    > ;
+OK
+tpep_pickup_datetime	date                	                    
+passenger_count     	int                 	                    
+trip_distance       	float               	                    
+Time taken: 0.162 seconds, Fetched: 3 row(s)
+hive> describe extended trips;
+OK
+tpep_pickup_datetime	date                	                    
+passenger_count     	int                 	                    
+trip_distance       	float               	                    
+	 	 
+Detailed Table Information	Table(tableName:trips, dbName:tripsdb, owner:hadoop, createTime:1715085454, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:tpep_pickup_datetime, type:date, comment:null), FieldSchema(name:passenger_count, type:int, comment:null), FieldSchema(name:trip_distance, type:float, comment:null)], location:hdfs://172.17.0.2:9000/tables/external/tripsdb, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=,, field.delim=,}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{EXTERNAL=TRUE, transient_lastDdlTime=1715085454}, viewOriginalText:null, viewExpandedText:null, tableType:EXTERNAL_TABLE, rewriteEnabled:false)	
+Time taken: 0.189 seconds, Fetched: 5 row(s)
+hive> describe formated trips;
+FAILED: SemanticException [Error 10001]: Table not found formated
+hive> describe formatted trips;
+OK
+# col_name            	data_type           	comment             
+	 	 
+tpep_pickup_datetime	date                	                    
+passenger_count     	int                 	                    
+trip_distance       	float               	                    
+	 	 
+# Detailed Table Information	 	 
+Database:           	tripsdb             	 
+Owner:              	hadoop              	 
+CreateTime:         	Tue May 07 09:37:34 ART 2024	 
+LastAccessTime:     	UNKNOWN             	 
+Retention:          	0                   	 
+Location:           	hdfs://172.17.0.2:9000/tables/external/tripsdb	 
+Table Type:         	EXTERNAL_TABLE      	 
+Table Parameters:	 	 
+	EXTERNAL            	TRUE                
+	transient_lastDdlTime	1715085454          
+	 	 
+# Storage Information	 	 
+SerDe Library:      	org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe	 
+InputFormat:        	org.apache.hadoop.mapred.TextInputFormat	 
+OutputFormat:       	org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat	 
+Compressed:         	No                  	 
+Num Buckets:        	-1                  	 
+Bucket Columns:     	[]                  	 
+Sort Columns:       	[]                  	 
+Storage Desc Params:	 	 
+	field.delim         	,                   
+	serialization.format	,                   
+Time taken: 0.185 seconds, Fetched: 29 row(s)
+hive> select * from trips
+    > ;
+OK
+Time taken: 1.079 seconds
+hive> select * from trips limit 10
+    > ;
+OK
+2021-01-01	2	19.1
+2021-01-01	3	10.74
+2021-01-01	3	16.54
+2021-01-01	2	11.1
+2021-01-01	2	15.19
+2021-01-01	2	15.4
+2021-01-01	2	17.68
+2021-01-01	2	10.4
+2021-01-01	2	17.05
+2021-01-01	2	15.73
+Time taken: 0.538 seconds, Fetched: 10 row(s)
+hive> show databases;
+OK
+default
+tripdata
+tripsdb
+Time taken: 1.349 seconds, Fetched: 3 row(s)
+hive> use tripsdb
+    > ;
+OK
+Time taken: 0.148 seconds
+hive> show tables;
+OK
+trips
+Time taken: 0.207 seconds, Fetched: 1 row(s)
+hive> create external table trips(tpep_pickup_datetime date, passenger_count int, trip_distance float)
+    >     > row format delimited
+    >     > fields terminated by ','
+    >     > location '/tables/external/tripsdb';
+FAILED: ParseException line 2:4 missing EOF at '>' near ')'
+hive> create external table pytrips(tpep_pickup_datetime date, passenger_count int, trip_distance float)
+    > row formtat delimited
+    > fields terminated by ','
+    > location '/tables/external/tripsdb';
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.tableRowFormat(HiveParser.java:27656)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createTableStatement(HiveParser.java:6278)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3808)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2382)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1333)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:208)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1317)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1457)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1237)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1227)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:323)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:236)
+FAILED: ParseException line 2:4 cannot recognize input near 'row' 'formtat' 'delimited' in table row format specification
+hive> create external table pytrips(tpep_pickup_datetime date, passenger_count int, trip_distance float)
+    > row format delimited
+    > fields terminated by ','
+    > location '/tables/external/tripsdb';
+OK
+Time taken: 0.544 seconds
+hive> select * from pytrips limit 10
+    > ;
+OK
+2021-01-01	2	19.1
+2021-01-01	3	10.74
+2021-01-01	3	16.54
+2021-01-01	2	11.1
+2021-01-01	2	15.19
+2021-01-01	2	15.4
+2021-01-01	2	17.68
+2021-01-01	2	10.4
+2021-01-01	2	17.05
+2021-01-01	2	15.73
+Time taken: 0.404 seconds, Fetched: 10 row(s)
+hive> select count(*) from pytrips;
+Automatically selecting local only mode for query
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hadoop_20240507102837_3bf15048-e2ac-4e32-bb2b-614f880b9675
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2024-05-07 10:28:42,181 Stage-1 map = 0%,  reduce = 0%
+2024-05-07 10:28:43,205 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local712270624_0001
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 965464 HDFS Write: 105 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+25420
+Time taken: 5.813 seconds, Fetched: 1 row(s)
+hive> select count(*) from pytrips;
+Automatically selecting local only mode for query
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hadoop_20240507103035_32613a45-2c6e-48e2-a868-9b8c0c39be5f
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2024-05-07 10:30:38,351 Stage-1 map = 100%,  reduce = 0%
+2024-05-07 10:30:39,364 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local1620475394_0002
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 2389294 HDFS Write: 315 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+38130
+Time taken: 3.621 seconds, Fetched: 1 row(s)
+hive> # creo que triplique los datos, ops!
+    > ;
+NoViableAltException(24@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1300)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:208)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1317)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1457)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1237)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1227)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:323)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:236)
+FAILED: ParseException line 1:2 cannot recognize input near 'creo' 'que' 'triplique'
+hive> // esto es un comentario hive
+    > ;
+NoViableAltException(14@[])
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1300)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:208)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1317)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1457)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1237)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1227)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:323)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:236)
+FAILED: ParseException line 1:0 cannot recognize input near '/' '/' 'esto'
+hive> exit
+    > ;
+hadoop@7e7bdeaf0621:/$ exit
+exit
+root@7e7bdeaf0621:/# exit
+exit

@@ -1,0 +1,74 @@
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+[sudo] password for nico: 
+root@7e7bdeaf0621:/# su hadoop
+hadoop@7e7bdeaf0621:/$ ls
+bin   dev  home  lib32  libx32  mnt  proc  run   srv  tmp  var
+boot  etc  lib   lib64  media   opt  root  sbin  sys  usr
+hadoop@7e7bdeaf0621:/$ cd home/
+hadoop@7e7bdeaf0621:/home$ ks
+bash: ks: command not found
+hadoop@7e7bdeaf0621:/home$ ls
+hadoop
+hadoop@7e7bdeaf0621:/home$ cd hadoop/
+hadoop@7e7bdeaf0621:~$ ls
+airflow              hive                 landing       spark
+codegen_region.java  hs_err_pid10630.log  metastore_db  spark-warehouse
+derby.log            hs_err_pid10724.log  nohup.out     sqoop
+hadoop               hs_err_pid10887.log  region.java   yarn-utils.py
+hadoopdata           hs_err_pid11254.log  scripts
+hadoop@7e7bdeaf0621:~$ cd landing/
+hadoop@7e7bdeaf0621:~/landing$ ls
+yellow_tripdata_2021-01.csv
+hadoop@7e7bdeaf0621:~/landing$ hdfs dfs -ls
+Found 2 items
+drwxr-xr-x   - hadoop supergroup          0 2024-05-07 08:32 .sparkStaging
+drwxr-xr-x   - hadoop supergroup          0 2022-01-22 23:56 inputs
+hadoop@7e7bdeaf0621:~/landing$ cd ..
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /
+Found 7 items
+drwxr-xr-x   - hadoop supergroup          0 2022-05-09 17:58 /ingest
+drwxr-xr-x   - hadoop supergroup          0 2022-04-26 19:51 /inputs
+drwxr-xr-x   - hadoop supergroup          0 2022-01-22 21:35 /logs
+drwxrwxrwx   - hadoop supergroup          0 2024-05-03 16:26 /nifi
+drwxr-xr-x   - hadoop supergroup          0 2024-04-25 12:21 /sqoop
+drwxrwxr-x   - hadoop supergroup          0 2022-05-02 20:46 /tmp
+drwxr-xr-x   - hadoop supergroup          0 2022-01-23 13:15 /user
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /ingest
+Found 1 items
+-rw-r--r--   1 hadoop supergroup  125981363 2022-05-09 17:58 /ingest/yellow_tripdata_2021-01.csv
+hadoop@7e7bdeaf0621:~$ df = spark.read.option("header", "true").csv("/ingest/yellow_tripdata_2021-01.csv")
+bash: syntax error near unexpected token `('
+hadoop@7e7bdeaf0621:~$ estoy en hadoop... ops!
+bash: estoy: command not found
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /tables/external/tripdb
+ls: `/tables/external/tripdb': No such file or directory
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls                        
+Found 2 items
+drwxr-xr-x   - hadoop supergroup          0 2024-05-07 08:32 .sparkStaging
+drwxr-xr-x   - hadoop supergroup          0 2022-01-22 23:56 inputs
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /
+Found 8 items
+drwxr-xr-x   - hadoop supergroup          0 2022-05-09 17:58 /ingest
+drwxr-xr-x   - hadoop supergroup          0 2022-04-26 19:51 /inputs
+drwxr-xr-x   - hadoop supergroup          0 2022-01-22 21:35 /logs
+drwxrwxrwx   - hadoop supergroup          0 2024-05-03 16:26 /nifi
+drwxr-xr-x   - hadoop supergroup          0 2024-04-25 12:21 /sqoop
+drwxr-xr-x   - hadoop supergroup          0 2024-05-07 09:37 /tables
+drwxrwxr-x   - hadoop supergroup          0 2022-05-02 20:46 /tmp
+drwxr-xr-x   - hadoop supergroup          0 2022-01-23 13:15 /user
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /tables
+Found 1 items
+drwxr-xr-x   - hadoop supergroup          0 2024-05-07 09:37 /tables/external
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /tables/external
+Found 1 items
+drwxr-xr-x   - hadoop supergroup          0 2024-05-07 10:00 /tables/external/tripsdb
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /tables/external/tripsdb
+Found 2 items
+-rwxr-xr-x   1 hadoop supergroup     156620 2024-05-07 10:00 /tables/external/tripsdb/part-00000-b5af0df2-8c35-466b-b216-cb082a456a7d-c000
+-rwxr-xr-x   1 hadoop supergroup      80650 2024-05-07 10:00 /tables/external/tripsdb/part-00001-b5af0df2-8c35-466b-b216-cb082a456a7d-c000
+hadoop@7e7bdeaf0621:~$ hdfs dfs -ls /tables/external/tripdb #falto una s
+ls: `/tables/external/tripdb': No such file or directory
+hadoop@7e7bdeaf0621:~$ exit
+exit
+root@7e7bdeaf0621:/# exit
+exit
