@@ -1,0 +1,1939 @@
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+[sudo] password for nico: 
+root@7e7bdeaf0621:/# ls /ingest
+ls: cannot access '/ingest': No such file or directory
+root@7e7bdeaf0621:/# ls        
+bin   dev  home  lib32  libx32  mnt  proc  run   srv  tmp  var
+boot  etc  lib   lib64  media   opt  root  sbin  sys  usr
+root@7e7bdeaf0621:/# cd home/landing
+bash: cd: home/landing: No such file or directory
+root@7e7bdeaf0621:/# ls
+bin   dev  home  lib32  libx32  mnt  proc  run   srv  tmp  var
+boot  etc  lib   lib64  media   opt  root  sbin  sys  usr
+root@7e7bdeaf0621:/# ls /home/hadoop/
+airflow              hive                 landing       spark
+codegen_region.java  hs_err_pid10630.log  metastore_db  spark-warehouse
+derby.log            hs_err_pid10724.log  nohup.out     sqoop
+hadoop               hs_err_pid10887.log  region.java   yarn-utils.py
+hadoopdata           hs_err_pid11254.log  scripts
+root@7e7bdeaf0621:/# ls /home/hadoop/landing/
+Utimas_Desvinculaciones.xlsx  yellow_tripdata_2021-01.csv
+root@7e7bdeaf0621:/# su hadoop
+hadoop@7e7bdeaf0621:/$ ls /home/hadoop/landing/
+Utimas_Desvinculaciones.xlsx  yellow_tripdata_2021-01.csv
+hadoop@7e7bdeaf0621:/$ hdfs dfs -put /home/hadoop/landing/Utimas_Desvinculaciones.xlsx /ingest
+hadoop@7e7bdeaf0621:/$ hdfs dfs -ls /ingest
+Found 2 items
+-rw-r--r--   1 hadoop supergroup      10657 2024-05-08 14:14 /ingest/Utimas_Desvinculaciones.xlsx
+-rw-r--r--   1 hadoop supergroup  125981363 2022-05-09 17:58 /ingest/yellow_tripdata_2021-01.csv
+hadoop@7e7bdeaf0621:/$ hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/hadoop/hive/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/hadoop/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+
+Logging initialized using configuration in jar:file:/home/hadoop/hive/lib/hive-common-2.3.9.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.hadoop.hive.common.StringInternUtils (file:/home/hadoop/hive/lib/hive-common-2.3.9.jar) to field java.net.URI.string
+WARNING: Please consider reporting this to the maintainers of org.apache.hadoop.hive.common.StringInternUtils
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+hive> show databases;
+OK
+default
+tripdata
+tripsdb
+Time taken: 1.514 seconds, Fetched: 3 row(s)
+hive> create dabase edvai_rrhh
+    > ;
+NoViableAltException(24@[846:1: ddlStatement : ( createDatabaseStatement | switchDatabaseStatement | dropDatabaseStatement | createTableStatement | dropTableStatement | truncateTableStatement | alterStatement | descStatement | showStatement | metastoreCheck | createViewStatement | createMaterializedViewStatement | dropViewStatement | dropMaterializedViewStatement | createFunctionStatement | createMacroStatement | createIndexStatement | dropIndexStatement | dropFunctionStatement | reloadFunctionStatement | dropMacroStatement | analyzeStatement | lockStatement | unlockStatement | lockDatabase | unlockDatabase | createRoleStatement | dropRoleStatement | ( grantPrivileges )=> grantPrivileges | ( revokePrivileges )=> revokePrivileges | showGrants | showRoleGrants | showRolePrincipals | showRoles | grantRole | revokeRole | setRole | showCurrentRole | abortTransactionStatement );])
+	at org.antlr.runtime.DFA.noViableAlt(DFA.java:158)
+	at org.antlr.runtime.DFA.predict(DFA.java:144)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3757)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2382)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1333)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:208)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1317)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1457)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1237)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1227)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:323)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:236)
+FAILED: ParseException line 1:7 cannot recognize input near 'create' 'dabase' 'edvai_rrhh' in ddl statement
+hive> show databases;
+OK
+default
+tripdata
+tripsdb
+Time taken: 0.06 seconds, Fetched: 3 row(s)
+hive> create database edvai_rrhh;
+OK
+Time taken: 2.161 seconds
+hive> show databases;
+OK
+default
+edvai_rrhh
+tripdata
+tripsdb
+Time taken: 0.051 seconds, Fetched: 4 row(s)
+hive> use edvai_rrhh
+    > ;
+OK
+Time taken: 0.091 seconds
+hive> create table desvinculaciones
+    > ;
+FAILED: SemanticException [Error 10043]: Either list of columns or a custom serializer should be specified
+hive> exit
+    > ;
+hadoop@7e7bdeaf0621:/$ pyspark
+Python 3.8.10 (default, Mar 15 2022, 12:22:08) 
+[GCC 9.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/hadoop/spark/jars/spark-unsafe_2.12-3.2.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+2024-05-08 14:22:21,436 WARN conf.HiveConf: HiveConf of name hive.metastore.local does not exist
+2024-05-08 14:22:21,623 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2024-05-08 14:22:26,400 WARN yarn.Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+
+Using Python version 3.8.10 (default, Mar 15 2022 12:22:08)
+Spark context Web UI available at http://7e7bdeaf0621:4040
+Spark context available as 'sc' (master = yarn, app id = application_1715188048538_0001).
+SparkSession available as 'spark'.
+>>> df = spark.read.format("com.crealytics.spark.excel") \
+...     .option("header", "true") \
+...     .load("/ingest/Utimas_Desvinculaciones.xlsx")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/readwriter.py", line 158, in load
+    return self._df(self._jreader.load(path))
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 111, in deco
+    return f(*a, **kw)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/protocol.py", line 326, in get_return_value
+py4j.protocol.Py4JJavaError: An error occurred while calling o35.load.
+: java.lang.ClassNotFoundException: 
+Failed to find data source: com.crealytics.spark.excel. Please find packages at
+http://spark.apache.org/third-party-projects.html
+       
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.failedToFindDataSourceError(QueryExecutionErrors.scala:443)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSource(DataSource.scala:670)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSourceV2(DataSource.scala:720)
+	at org.apache.spark.sql.DataFrameReader.load(DataFrameReader.scala:210)
+	at org.apache.spark.sql.DataFrameReader.load(DataFrameReader.scala:188)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:357)
+	at py4j.Gateway.invoke(Gateway.java:282)
+	at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+	at py4j.commands.CallCommand.execute(CallCommand.java:79)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.ClassNotFoundException: com.crealytics.spark.excel.DefaultSource
+	at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:476)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:589)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
+	at org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$lookupDataSource$5(DataSource.scala:656)
+	at scala.util.Try$.apply(Try.scala:213)
+	at org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$lookupDataSource$4(DataSource.scala:656)
+	at scala.util.Failure.orElse(Try.scala:224)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSource(DataSource.scala:656)
+	... 15 more
+
+>>> df.printSchema()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df' is not defined
+>>> pip install spark-excel
+  File "<stdin>", line 1
+    pip install spark-excel
+        ^
+SyntaxError: invalid syntax
+>>> #
+>>> #me vine a spark porque para crear la tabla en hive necesitaba saber que columnas necesitaba. Ahora para abrir xlsx necestito spark-excel
+>>> exit()
+hadoop@7e7bdeaf0621:/$ pip install spark-excel
+ERROR: Could not find a version that satisfies the requirement spark-excel (from versions: none)
+ERROR: No matching distribution found for spark-excel
+hadoop@7e7bdeaf0621:/$ #gpt me recomienda esto...
+hadoop@7e7bdeaf0621:/$ spark-shell --jars /path/to/spark-excel-x.x.x.jar
+
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/hadoop/spark/jars/spark-unsafe_2.12-3.2.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+2024-05-08 14:28:58,325 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2024-05-08 14:28:58,888 WARN util.DependencyUtils: Local jar /path/to/spark-excel-x.x.x.jar does not exist, skipping.
+2024-05-08 14:28:58,937 INFO util.SignalUtils: Registering signal handler for INT
+2024-05-08 14:29:12,152 INFO conf.HiveConf: Found configuration file file:/home/hadoop/spark/conf/hive-site.xml
+2024-05-08 14:29:12,305 INFO spark.SparkContext: Running Spark version 3.2.0
+2024-05-08 14:29:12,370 INFO resource.ResourceUtils: ==============================================================
+2024-05-08 14:29:12,371 INFO resource.ResourceUtils: No custom resources configured for spark.driver.
+2024-05-08 14:29:12,375 INFO resource.ResourceUtils: ==============================================================
+2024-05-08 14:29:12,377 INFO spark.SparkContext: Submitted application: Spark shell
+2024-05-08 14:29:12,433 INFO resource.ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+2024-05-08 14:29:12,452 INFO resource.ResourceProfile: Limiting resource is cpus at 1 tasks per executor
+2024-05-08 14:29:12,454 INFO resource.ResourceProfileManager: Added ResourceProfile id: 0
+2024-05-08 14:29:12,627 INFO spark.SecurityManager: Changing view acls to: hadoop
+2024-05-08 14:29:12,633 INFO spark.SecurityManager: Changing modify acls to: hadoop
+2024-05-08 14:29:12,635 INFO spark.SecurityManager: Changing view acls groups to: 
+2024-05-08 14:29:12,640 INFO spark.SecurityManager: Changing modify acls groups to: 
+2024-05-08 14:29:12,646 INFO spark.SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(hadoop); groups with view permissions: Set(); users  with modify permissions: Set(hadoop); groups with modify permissions: Set()
+2024-05-08 14:29:13,271 INFO util.Utils: Successfully started service 'sparkDriver' on port 34377.
+2024-05-08 14:29:13,360 INFO spark.SparkEnv: Registering MapOutputTracker
+2024-05-08 14:29:13,426 INFO spark.SparkEnv: Registering BlockManagerMaster
+2024-05-08 14:29:13,480 INFO storage.BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+2024-05-08 14:29:13,481 INFO storage.BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+2024-05-08 14:29:13,553 INFO spark.SparkEnv: Registering BlockManagerMasterHeartbeat
+2024-05-08 14:29:13,624 INFO storage.DiskBlockManager: Created local directory at /tmp/blockmgr-10acf753-6d6a-46aa-b9db-d12079cbdca2
+2024-05-08 14:29:13,670 INFO memory.MemoryStore: MemoryStore started with capacity 434.4 MiB
+2024-05-08 14:29:13,755 INFO spark.SparkEnv: Registering OutputCommitCoordinator
+2024-05-08 14:29:14,026 INFO util.log: Logging initialized @19159ms to org.sparkproject.jetty.util.log.Slf4jLog
+2024-05-08 14:29:14,143 INFO server.Server: jetty-9.4.43.v20210629; built: 2021-06-30T11:07:22.254Z; git: 526006ecfa3af7f1a27ef3a288e2bef7ea9dd7e8; jvm 11.0.13+8-Ubuntu-0ubuntu1.20.04
+2024-05-08 14:29:14,197 INFO server.Server: Started @19331ms
+2024-05-08 14:29:14,262 INFO server.AbstractConnector: Started ServerConnector@3b5b100a{HTTP/1.1, (http/1.1)}{0.0.0.0:4040}
+2024-05-08 14:29:14,263 INFO util.Utils: Successfully started service 'SparkUI' on port 4040.
+2024-05-08 14:29:14,360 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a8bf1dc{/jobs,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,374 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1d38cdde{/jobs/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,375 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@717b0d81{/jobs/job,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,384 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@138b9abe{/jobs/job/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,395 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23ffc910{/stages,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,400 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a364e1c{/stages/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,406 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@74cff17c{/stages/stage,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,409 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eae5f{/stages/stage/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,416 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7698a3d9{/stages/pool,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,419 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@39dce2df{/stages/pool/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,427 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5598dff2{/storage,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,429 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@57bfca3a{/storage/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,437 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4b9d2cee{/storage/rdd,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,441 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@337eeceb{/storage/rdd/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,445 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1a5a4f8{/environment,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,451 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@174f0d06{/environment/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,456 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@706690e1{/executors,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,461 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@59aba3c3{/executors/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,466 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@236a3e4{/executors/threadDump,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,476 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2d36add1{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,522 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4271b748{/static,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,525 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1b96d447{/,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,531 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3a47bf0e{/api,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,537 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@25587290{/jobs/job/kill,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,541 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7ffe8a82{/stages/stage/kill,null,AVAILABLE,@Spark}
+2024-05-08 14:29:14,544 INFO ui.SparkUI: Bound SparkUI to 0.0.0.0, and started at http://7e7bdeaf0621:4040
+2024-05-08 14:29:15,420 INFO client.DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at /0.0.0.0:8032
+2024-05-08 14:29:15,885 INFO yarn.Client: Requesting a new application from cluster with 1 NodeManagers
+2024-05-08 14:29:17,005 INFO conf.Configuration: resource-types.xml not found
+2024-05-08 14:29:17,006 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+2024-05-08 14:29:17,042 INFO yarn.Client: Verifying our application has not requested more than the maximum memory capability of the cluster (4608 MB per container)
+2024-05-08 14:29:17,043 INFO yarn.Client: Will allocate AM container, with 896 MB memory including 384 MB overhead
+2024-05-08 14:29:17,043 INFO yarn.Client: Setting up container launch context for our AM
+2024-05-08 14:29:17,044 INFO yarn.Client: Setting up the launch environment for our AM container
+2024-05-08 14:29:17,052 INFO yarn.Client: Preparing resources for our AM container
+2024-05-08 14:29:17,150 WARN yarn.Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+2024-05-08 14:29:23,031 INFO yarn.Client: Uploading resource file:/tmp/spark-5e2846b4-e0ac-4fce-9b04-6fee04adb184/__spark_libs__10376720414697501101.zip -> hdfs://172.17.0.2:9000/user/hadoop/.sparkStaging/application_1715188048538_0002/__spark_libs__10376720414697501101.zip
+2024-05-08 14:29:27,194 INFO yarn.Client: Uploading resource file:/path/to/spark-excel-x.x.x.jar -> hdfs://172.17.0.2:9000/user/hadoop/.sparkStaging/application_1715188048538_0002/spark-excel-x.x.x.jar
+2024-05-08 14:29:27,254 INFO yarn.Client: Deleted staging directory hdfs://172.17.0.2:9000/user/hadoop/.sparkStaging/application_1715188048538_0002
+2024-05-08 14:29:27,262 ERROR spark.SparkContext: Error initializing SparkContext.
+java.io.FileNotFoundException: File file:/path/to/spark-excel-x.x.x.jar does not exist
+	at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:779)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:1100)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:769)
+	at org.apache.hadoop.fs.FilterFileSystem.getFileStatus(FilterFileSystem.java:462)
+	at org.apache.hadoop.fs.FileUtil.copy(FileUtil.java:389)
+	at org.apache.hadoop.fs.FileUtil.copy(FileUtil.java:340)
+	at org.apache.spark.deploy.yarn.Client.copyFileToRemote(Client.scala:405)
+	at org.apache.spark.deploy.yarn.Client.distribute$1(Client.scala:502)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$27(Client.scala:654)
+	at scala.collection.mutable.ResizableArray.foreach(ResizableArray.scala:62)
+	at scala.collection.mutable.ResizableArray.foreach$(ResizableArray.scala:55)
+	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:49)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$26(Client.scala:653)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$26$adapted(Client.scala:652)
+	at scala.collection.immutable.List.foreach(List.scala:431)
+	at org.apache.spark.deploy.yarn.Client.prepareLocalResources(Client.scala:652)
+	at org.apache.spark.deploy.yarn.Client.createContainerLaunchContext(Client.scala:928)
+	at org.apache.spark.deploy.yarn.Client.submitApplication(Client.scala:202)
+	at org.apache.spark.scheduler.cluster.YarnClientSchedulerBackend.start(YarnClientSchedulerBackend.scala:62)
+	at org.apache.spark.scheduler.TaskSchedulerImpl.start(TaskSchedulerImpl.scala:220)
+	at org.apache.spark.SparkContext.<init>(SparkContext.scala:581)
+	at org.apache.spark.SparkContext$.getOrCreate(SparkContext.scala:2690)
+	at org.apache.spark.sql.SparkSession$Builder.$anonfun$getOrCreate$2(SparkSession.scala:949)
+	at scala.Option.getOrElse(Option.scala:189)
+	at org.apache.spark.sql.SparkSession$Builder.getOrCreate(SparkSession.scala:943)
+	at org.apache.spark.repl.Main$.createSparkSession(Main.scala:106)
+	at $line3.$read$$iw$$iw.<init>(<console>:15)
+	at $line3.$read$$iw.<init>(<console>:42)
+	at $line3.$read.<init>(<console>:44)
+	at $line3.$read$.<init>(<console>:48)
+	at $line3.$read$.<clinit>(<console>)
+	at $line3.$eval$.$print$lzycompute(<console>:7)
+	at $line3.$eval$.$print(<console>:6)
+	at $line3.$eval.$print(<console>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at scala.tools.nsc.interpreter.IMain$ReadEvalPrint.call(IMain.scala:747)
+	at scala.tools.nsc.interpreter.IMain$Request.loadAndRun(IMain.scala:1020)
+	at scala.tools.nsc.interpreter.IMain.$anonfun$interpret$1(IMain.scala:568)
+	at scala.reflect.internal.util.ScalaClassLoader.asContext(ScalaClassLoader.scala:36)
+	at scala.reflect.internal.util.ScalaClassLoader.asContext$(ScalaClassLoader.scala:116)
+	at scala.reflect.internal.util.AbstractFileClassLoader.asContext(AbstractFileClassLoader.scala:41)
+	at scala.tools.nsc.interpreter.IMain.loadAndRunReq$1(IMain.scala:567)
+	at scala.tools.nsc.interpreter.IMain.interpret(IMain.scala:594)
+	at scala.tools.nsc.interpreter.IMain.interpret(IMain.scala:564)
+	at scala.tools.nsc.interpreter.IMain.$anonfun$quietRun$1(IMain.scala:216)
+	at scala.tools.nsc.interpreter.IMain.beQuietDuring(IMain.scala:206)
+	at scala.tools.nsc.interpreter.IMain.quietRun(IMain.scala:216)
+	at org.apache.spark.repl.SparkILoop.$anonfun$initializeSpark$2(SparkILoop.scala:83)
+	at scala.collection.immutable.List.foreach(List.scala:431)
+	at org.apache.spark.repl.SparkILoop.$anonfun$initializeSpark$1(SparkILoop.scala:83)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.tools.nsc.interpreter.ILoop.savingReplayStack(ILoop.scala:97)
+	at org.apache.spark.repl.SparkILoop.initializeSpark(SparkILoop.scala:83)
+	at org.apache.spark.repl.SparkILoop.$anonfun$process$4(SparkILoop.scala:165)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.tools.nsc.interpreter.ILoop.$anonfun$mumly$1(ILoop.scala:166)
+	at scala.tools.nsc.interpreter.IMain.beQuietDuring(IMain.scala:206)
+	at scala.tools.nsc.interpreter.ILoop.mumly(ILoop.scala:163)
+	at org.apache.spark.repl.SparkILoop.loopPostInit$1(SparkILoop.scala:153)
+	at org.apache.spark.repl.SparkILoop.$anonfun$process$10(SparkILoop.scala:221)
+	at org.apache.spark.repl.SparkILoop.withSuppressedSettings$1(SparkILoop.scala:189)
+	at org.apache.spark.repl.SparkILoop.startup$1(SparkILoop.scala:201)
+	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:236)
+	at org.apache.spark.repl.Main$.doMain(Main.scala:78)
+	at org.apache.spark.repl.Main$.main(Main.scala:58)
+	at org.apache.spark.repl.Main.main(Main.scala)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.spark.deploy.JavaMainApplication.start(SparkApplication.scala:52)
+	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:955)
+	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:180)
+	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:203)
+	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:90)
+	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1043)
+	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1052)
+	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+2024-05-08 14:29:27,356 INFO server.AbstractConnector: Stopped Spark@3b5b100a{HTTP/1.1, (http/1.1)}{0.0.0.0:4040}
+2024-05-08 14:29:27,363 INFO ui.SparkUI: Stopped Spark web UI at http://7e7bdeaf0621:4040
+2024-05-08 14:29:27,426 WARN cluster.YarnSchedulerBackend$YarnSchedulerEndpoint: Attempted to request executors before the AM has registered!
+2024-05-08 14:29:27,470 INFO cluster.YarnClientSchedulerBackend: Shutting down all executors
+2024-05-08 14:29:27,481 INFO cluster.YarnSchedulerBackend$YarnDriverEndpoint: Asking each executor to shut down
+2024-05-08 14:29:27,492 INFO cluster.YarnClientSchedulerBackend: YARN client scheduler backend Stopped
+2024-05-08 14:29:27,756 INFO spark.MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+2024-05-08 14:29:27,846 INFO memory.MemoryStore: MemoryStore cleared
+2024-05-08 14:29:27,848 INFO storage.BlockManager: BlockManager stopped
+2024-05-08 14:29:27,905 INFO storage.BlockManagerMaster: BlockManagerMaster stopped
+2024-05-08 14:29:27,906 WARN metrics.MetricsSystem: Stopping a MetricsSystem that is not running
+2024-05-08 14:29:27,909 INFO scheduler.OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+2024-05-08 14:29:27,980 INFO spark.SparkContext: Successfully stopped SparkContext
+2024-05-08 14:29:27,980 ERROR repl.Main: Failed to initialize Spark session.
+java.io.FileNotFoundException: File file:/path/to/spark-excel-x.x.x.jar does not exist
+	at org.apache.hadoop.fs.RawLocalFileSystem.deprecatedGetFileStatus(RawLocalFileSystem.java:779)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileLinkStatusInternal(RawLocalFileSystem.java:1100)
+	at org.apache.hadoop.fs.RawLocalFileSystem.getFileStatus(RawLocalFileSystem.java:769)
+	at org.apache.hadoop.fs.FilterFileSystem.getFileStatus(FilterFileSystem.java:462)
+	at org.apache.hadoop.fs.FileUtil.copy(FileUtil.java:389)
+	at org.apache.hadoop.fs.FileUtil.copy(FileUtil.java:340)
+	at org.apache.spark.deploy.yarn.Client.copyFileToRemote(Client.scala:405)
+	at org.apache.spark.deploy.yarn.Client.distribute$1(Client.scala:502)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$27(Client.scala:654)
+	at scala.collection.mutable.ResizableArray.foreach(ResizableArray.scala:62)
+	at scala.collection.mutable.ResizableArray.foreach$(ResizableArray.scala:55)
+	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:49)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$26(Client.scala:653)
+	at org.apache.spark.deploy.yarn.Client.$anonfun$prepareLocalResources$26$adapted(Client.scala:652)
+	at scala.collection.immutable.List.foreach(List.scala:431)
+	at org.apache.spark.deploy.yarn.Client.prepareLocalResources(Client.scala:652)
+	at org.apache.spark.deploy.yarn.Client.createContainerLaunchContext(Client.scala:928)
+	at org.apache.spark.deploy.yarn.Client.submitApplication(Client.scala:202)
+	at org.apache.spark.scheduler.cluster.YarnClientSchedulerBackend.start(YarnClientSchedulerBackend.scala:62)
+	at org.apache.spark.scheduler.TaskSchedulerImpl.start(TaskSchedulerImpl.scala:220)
+	at org.apache.spark.SparkContext.<init>(SparkContext.scala:581)
+	at org.apache.spark.SparkContext$.getOrCreate(SparkContext.scala:2690)
+	at org.apache.spark.sql.SparkSession$Builder.$anonfun$getOrCreate$2(SparkSession.scala:949)
+	at scala.Option.getOrElse(Option.scala:189)
+	at org.apache.spark.sql.SparkSession$Builder.getOrCreate(SparkSession.scala:943)
+	at org.apache.spark.repl.Main$.createSparkSession(Main.scala:106)
+	at $line3.$read$$iw$$iw.<init>(<console>:15)
+	at $line3.$read$$iw.<init>(<console>:42)
+	at $line3.$read.<init>(<console>:44)
+	at $line3.$read$.<init>(<console>:48)
+	at $line3.$read$.<clinit>(<console>)
+	at $line3.$eval$.$print$lzycompute(<console>:7)
+	at $line3.$eval$.$print(<console>:6)
+	at $line3.$eval.$print(<console>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at scala.tools.nsc.interpreter.IMain$ReadEvalPrint.call(IMain.scala:747)
+	at scala.tools.nsc.interpreter.IMain$Request.loadAndRun(IMain.scala:1020)
+	at scala.tools.nsc.interpreter.IMain.$anonfun$interpret$1(IMain.scala:568)
+	at scala.reflect.internal.util.ScalaClassLoader.asContext(ScalaClassLoader.scala:36)
+	at scala.reflect.internal.util.ScalaClassLoader.asContext$(ScalaClassLoader.scala:116)
+	at scala.reflect.internal.util.AbstractFileClassLoader.asContext(AbstractFileClassLoader.scala:41)
+	at scala.tools.nsc.interpreter.IMain.loadAndRunReq$1(IMain.scala:567)
+	at scala.tools.nsc.interpreter.IMain.interpret(IMain.scala:594)
+	at scala.tools.nsc.interpreter.IMain.interpret(IMain.scala:564)
+	at scala.tools.nsc.interpreter.IMain.$anonfun$quietRun$1(IMain.scala:216)
+	at scala.tools.nsc.interpreter.IMain.beQuietDuring(IMain.scala:206)
+	at scala.tools.nsc.interpreter.IMain.quietRun(IMain.scala:216)
+	at org.apache.spark.repl.SparkILoop.$anonfun$initializeSpark$2(SparkILoop.scala:83)
+	at scala.collection.immutable.List.foreach(List.scala:431)
+	at org.apache.spark.repl.SparkILoop.$anonfun$initializeSpark$1(SparkILoop.scala:83)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.tools.nsc.interpreter.ILoop.savingReplayStack(ILoop.scala:97)
+	at org.apache.spark.repl.SparkILoop.initializeSpark(SparkILoop.scala:83)
+	at org.apache.spark.repl.SparkILoop.$anonfun$process$4(SparkILoop.scala:165)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.tools.nsc.interpreter.ILoop.$anonfun$mumly$1(ILoop.scala:166)
+	at scala.tools.nsc.interpreter.IMain.beQuietDuring(IMain.scala:206)
+	at scala.tools.nsc.interpreter.ILoop.mumly(ILoop.scala:163)
+	at org.apache.spark.repl.SparkILoop.loopPostInit$1(SparkILoop.scala:153)
+	at org.apache.spark.repl.SparkILoop.$anonfun$process$10(SparkILoop.scala:221)
+	at org.apache.spark.repl.SparkILoop.withSuppressedSettings$1(SparkILoop.scala:189)
+	at org.apache.spark.repl.SparkILoop.startup$1(SparkILoop.scala:201)
+	at org.apache.spark.repl.SparkILoop.process(SparkILoop.scala:236)
+	at org.apache.spark.repl.Main$.doMain(Main.scala:78)
+	at org.apache.spark.repl.Main$.main(Main.scala:58)
+	at org.apache.spark.repl.Main.main(Main.scala)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.spark.deploy.JavaMainApplication.start(SparkApplication.scala:52)
+	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:955)
+	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:180)
+	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:203)
+	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:90)
+	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1043)
+	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1052)
+	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+2024-05-08 14:29:28,045 INFO util.ShutdownHookManager: Shutdown hook called
+2024-05-08 14:29:28,047 INFO util.ShutdownHookManager: Deleting directory /tmp/spark-5e2846b4-e0ac-4fce-9b04-6fee04adb184
+2024-05-08 14:29:28,091 INFO util.ShutdownHookManager: Deleting directory /tmp/spark-5e2846b4-e0ac-4fce-9b04-6fee04adb184/repl-5168d964-ac45-4f8b-9e2a-0c2653682abb
+2024-05-08 14:29:28,104 INFO util.ShutdownHookManager: Deleting directory /tmp/spark-affa4dcc-8343-4179-9239-f2e3c7c48b09
+hadoop@7e7bdeaf0621:/$ 
+hadoop@7e7bdeaf0621:/$ # ops! me falto esto Replace /path/to/spark-excel-x.x.x.jar with the actual path to the downloaded JAR file.
+hadoop@7e7bdeaf0621:/$ pyspark
+Python 3.8.10 (default, Mar 15 2022, 12:22:08) 
+[GCC 9.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/hadoop/spark/jars/spark-unsafe_2.12-3.2.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+2024-05-08 14:29:51,804 WARN conf.HiveConf: HiveConf of name hive.metastore.local does not exist
+2024-05-08 14:29:52,006 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2024-05-08 14:29:56,146 WARN yarn.Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+
+Using Python version 3.8.10 (default, Mar 15 2022 12:22:08)
+Spark context Web UI available at http://7e7bdeaf0621:4040
+Spark context available as 'sc' (master = yarn, app id = application_1715188048538_0003).
+SparkSession available as 'spark'.
+>>> 2024-05-08 14:51:23,434 WARN spark.HeartbeatReceiver: Removing executor 1 with no recent heartbeats: 396951 ms exceeds timeout 120000 ms
+2024-05-08 14:51:23,641 ERROR cluster.YarnScheduler: Lost executor 1 on 7e7bdeaf0621: Executor heartbeat timed out after 396951 ms
+spark
+<pyspark.sql.session.SparkSession object at 0x70a104bd4f40>
+>>> df = spark.read.format("com.crealytics.spark.excel") \
+...     .option("header", "true") \
+...     .load("/ingest/Utimas_Desvinculaciones.xlsx")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/readwriter.py", line 158, in load
+    return self._df(self._jreader.load(path))
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 111, in deco
+    return f(*a, **kw)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/protocol.py", line 326, in get_return_value
+py4j.protocol.Py4JJavaError: An error occurred while calling o35.load.
+: java.lang.ClassNotFoundException: 
+Failed to find data source: com.crealytics.spark.excel. Please find packages at
+http://spark.apache.org/third-party-projects.html
+       
+	at org.apache.spark.sql.errors.QueryExecutionErrors$.failedToFindDataSourceError(QueryExecutionErrors.scala:443)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSource(DataSource.scala:670)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSourceV2(DataSource.scala:720)
+	at org.apache.spark.sql.DataFrameReader.load(DataFrameReader.scala:210)
+	at org.apache.spark.sql.DataFrameReader.load(DataFrameReader.scala:188)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+	at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:357)
+	at py4j.Gateway.invoke(Gateway.java:282)
+	at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+	at py4j.commands.CallCommand.execute(CallCommand.java:79)
+	at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+	at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.ClassNotFoundException: com.crealytics.spark.excel.DefaultSource
+	at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:476)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:589)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:522)
+	at org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$lookupDataSource$5(DataSource.scala:656)
+	at scala.util.Try$.apply(Try.scala:213)
+	at org.apache.spark.sql.execution.datasources.DataSource$.$anonfun$lookupDataSource$4(DataSource.scala:656)
+	at scala.util.Failure.orElse(Try.scala:224)
+	at org.apache.spark.sql.execution.datasources.DataSource$.lookupDataSource(DataSource.scala:656)
+	... 15 more
+
+>>> exit()
+hadoop@7e7bdeaf0621:/$ exit
+exit
+root@7e7bdeaf0621:/# exit
+exit
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana0/*.csv edvai_hadoop:/home/hadoop/landing 
+[sudo] password for nico: 
+lstat /home/nico/Documents/edvai/EVDVai_DataEng/semana0/*.csv: no such file or directory
+nico@home:~$ #aaaaaaah los transforme en google sheet y los descargue en semana 5 no 0. OK!
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv edvai_hadoop:/home/hadoop/landing 
+"docker cp" requires exactly 2 arguments.
+See 'docker cp --help'.
+
+Usage:  docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv edvai_hadoop:/home/hadoop/landing
+"docker cp" requires exactly 2 arguments.
+See 'docker cp --help'.
+
+Usage:  docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+nico@home:~$ #mmmm... son solo 3 los puedo pasar one by one
+nico@home:~$ ls home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv
+ls: cannot access 'home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv': No such file or directory
+nico@home:~$ ls /home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv
+'/home/nico/Documents/edvai/EVDVai_DataEng/semana5/Untitled spreadsheet - Managers.csv'
+'/home/nico/Documents/edvai/EVDVai_DataEng/semana5/Untitled spreadsheet - Rangos.csv'
+'/home/nico/Documents/edvai/EVDVai_DataEng/semana5/Untitled spreadsheet - Row data.csv'
+nico@home:~$ ls home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv
+ls: cannot access 'home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv': No such file or directory
+nico@home:~$ ls /home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv
+/home/nico/Documents/edvai/EVDVai_DataEng/semana5/Managers.csv
+/home/nico/Documents/edvai/EVDVai_DataEng/semana5/Rangos.csv
+/home/nico/Documents/edvai/EVDVai_DataEng/semana5/RowData.csv
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/*.csv edvai_hadoop:/home/hadoop/landing
+"docker cp" requires exactly 2 arguments.
+See 'docker cp --help'.
+
+Usage:  docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/Managers.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 2.05kB to edvai_hadoop:/home/hadoop/landing
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/Rangos.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 2.05kB to edvai_hadoop:/home/hadoop/landing
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/RowData.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 4.61kB to edvai_hadoop:/home/hadoop/landing
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+root@7e7bdeaf0621:/# su hadoop
+hadoop@7e7bdeaf0621:/$ ls /home/hadoop/landing/
+Managers.csv  RowData.csv                   yellow_tripdata_2021-01.csv
+Rangos.csv    Utimas_Desvinculaciones.xlsx
+hadoop@7e7bdeaf0621:/$ rm /home/hadoop/landing/yellow_tripdata_2021-01.csv /home/hadoop/landing/Utimas_Desvinculaciones.xlsx 
+hadoop@7e7bdeaf0621:/$ ls /home/hadoop/landing/
+Managers.csv  Rangos.csv  RowData.csv
+hadoop@7e7bdeaf0621:/$ hdfs dfs -put /home/hadoop/landing/* /ingest
+hadoop@7e7bdeaf0621:/$ hdfs dfs -ls /ingest
+Found 5 items
+-rw-r--r--   1 hadoop supergroup        202 2024-05-08 15:19 /ingest/Managers.csv
+-rw-r--r--   1 hadoop supergroup        249 2024-05-08 15:19 /ingest/Rangos.csv
+-rw-r--r--   1 hadoop supergroup       2611 2024-05-08 15:19 /ingest/RowData.csv
+-rw-r--r--   1 hadoop supergroup      10657 2024-05-08 14:14 /ingest/Utimas_Desvinculaciones.xlsx
+-rw-r--r--   1 hadoop supergroup  125981363 2022-05-09 17:58 /ingest/yellow_tripdata_2021-01.csv
+hadoop@7e7bdeaf0621:/$ pyspark
+Python 3.8.10 (default, Mar 15 2022, 12:22:08) 
+[GCC 9.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/hadoop/spark/jars/spark-unsafe_2.12-3.2.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+2024-05-08 15:20:24,324 WARN conf.HiveConf: HiveConf of name hive.metastore.local does not exist
+2024-05-08 15:20:24,669 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2024-05-08 15:20:29,674 WARN yarn.Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+spark
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+
+Using Python version 3.8.10 (default, Mar 15 2022 12:22:08)
+Spark context Web UI available at http://7e7bdeaf0621:4040
+Spark context available as 'sc' (master = yarn, app id = application_1715188048538_0004).
+SparkSession available as 'spark'.
+>>> spark
+<pyspark.sql.session.SparkSession object at 0x707282742f40>
+>>> df = spark.read.option("header", "true").csv("/ingest/RowData.csv")
+>>> df_managers = spark.read.option("header", "true").csv("/ingest/Managers.csv")
+>>> df_rangos = spark.read.option("header", "true").csv("/ingest/Rangos.csv")
+>>> df.show(4)
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+
+| Id|   Nombre| Apellido|   Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment|Rango Salarial|RS competencia|Manager|Realizo Cursos|
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+
+|  4|Sebastian| González|Legales|    05/07/2018|05/30/2021|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      3|            SI|
+|  7| Anabella|Fernández| Ventas|    07/06/2020|03/31/2021|   N4|          Grupo A|                 3|       Rango 4|       Rango 4|      8|            NO|
+|  8|Francesca|    López|Compras|    01/02/2017|06/30/2021|   N3|          Grupo A|                 4|       Rango 3|       Rango 3|      2|            SI|
+| 10|      Ana|     Diaz|     IT|    03/06/2017|11/30/2020|   N4|          Grupo A|                 3|       Rango 3|       Rango 3|      7|            NO|
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+
+only showing top 4 rows
+
+>>> df_managers.show(3)
++---+-------+--------+                                                          
+| Id| Nombre|Apellido|
++---+-------+--------+
+|  1|Rolando|   Casas|
+|  2| Marina|  Pitana|
+|  3|   José|Feligres|
++---+-------+--------+
+only showing top 3 rows
+
+>>> df_rangos.show(3)
++-------+------+------+
+|  Rango| desde| hasta|
++-------+------+------+
+|Rango 1|150000|200000|
+|Rango 2|200001|250000|
+|Rango 3|250001|300000|
++-------+------+------+
+only showing top 3 rows
+
+>>> df.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+
+>>> df.Manager.show(5)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'Column' object is not callable
+>>> df['Manager'].show(5)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'Column' object is not callable
+>>> df.select('Manager').show(5)
++-------+
+|Manager|
++-------+
+|      3|
+|      8|
+|      2|
+|      7|
+|      7|
++-------+
+only showing top 5 rows
+
+>>> dfjoin = df.join(df_managers, df.Manager == df_managers.Id, "inner")
+>>> df.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+
+>>> from pyspark.sql.functions import col
+>>> #deberia cambiar los nombres de las columnas en la tabla manager antes de hacer el join, ops!
+>>> #ya importe las funciones para eso, just do it please!
+>>> df_managers_renamed = df_managers \
+... .withColumnRenamed("Nombre", "Nombre_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+>>> If you want to rename columns in PySpark DataFrame using Python without using SQL, you can achieve that with the `withColumnRenamed` function. Here's how you can do it:
+  File "<stdin>", line 1
+    If you want to rename columns in PySpark DataFrame using Python without using SQL, you can achieve that with the `withColumnRenamed` function. Here's how you can do it:
+       ^
+SyntaxError: invalid syntax
+>>> 
+>>> ```python
+  File "<stdin>", line 1
+    ```python
+    ^
+SyntaxError: invalid syntax
+>>> from pyspark.sql import SparkSession
+>>> 
+>>> # Create SparkSession
+>>> spark = SparkSession.builder \
+...     .appName("ColumnRenamingExample") \
+...     .getOrCreate()
+>>> 
+>>> # Sample DataFrames
+>>> # Assuming df and df_managers are already defined DataFrames
+>>> 
+>>> # Renaming columns in df_managers
+>>> df_managers_renamed = df_managers \
+...     .withColumnRenamed("Nombre", "Nombre_Manager") \
+...     .withColumnRenamed("Apellido", "Apellido_Manager")
+>>> 
+>>> # Performing the join
+>>> dfjoin = df.join(df_managers_renamed, df.Manager == df_managers_renamed.Id, "inner")
+>>> 
+>>> # Showing the resulting DataFrame
+>>> dfjoin.show()
++---+---------+---------+----------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+
+| Id|   Nombre| Apellido|      Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment|Rango Salarial|RS competencia|Manager|Realizo Cursos| Id|Nombre_Manager|Apellido_Manager|
++---+---------+---------+----------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+
+|  4|Sebastian| González|   Legales|    05/07/2018|05/30/2021|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      3|            SI|  3|          José|        Feligres|
+|  7| Anabella|Fernández|    Ventas|    07/06/2020|03/31/2021|   N4|          Grupo A|                 3|       Rango 4|       Rango 4|      8|            NO|  8|       Ricardo|         Ronaldo|
+|  8|Francesca|    López|   Compras|    01/02/2017|06/30/2021|   N3|          Grupo A|                 4|       Rango 3|       Rango 3|      2|            SI|  2|        Marina|          Pitana|
+| 10|      Ana|     Diaz|        IT|    03/06/2017|11/30/2020|   N4|          Grupo A|                 3|       Rango 3|       Rango 3|      7|            NO|  7|        Martín|          Viglia|
+| 13|Alejandro|   Romero|        IT|    06/01/2020|02/28/2022|   N3|          Grupo A|                 3|       Rango 4|       Rango 3|      7|            SI|  7|        Martín|          Viglia|
+| 15|   Analia|     Sosa|   Compras|    10/01/2018|11/30/2021|   N4|          Grupo A|                 4|       Rango 4|       Rango 4|      2|            NO|  2|        Marina|          Pitana|
+| 17|Guillermo|  Ramírez|        IT|    01/06/2020|05/31/2022|   N2|          Grupo A|                 3|       Rango 2|       Rango 2|      7|            NO|  7|        Martín|          Viglia|
+| 19|    Rocio|     Ruiz| Auditoria|    02/05/2018|01/30/2021|   N4|          Grupo A|                 4|       Rango 4|       Rango 5|     10|            NO| 10|        Daniel|         Quiroga|
+| 24|  Micaela|    Pauls|Producción|    01/07/2019|12/31/2021|   N6|          Grupo A|                 5|       Rango 6|       Rango 6|      4|            SI|  4|        Miriam|          Pisani|
+| 27|  Rodrigo|  Molinas|   Compras|    06/03/2019|04/30/2022|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      2|            SI|  2|        Marina|          Pitana|
+| 28|  Martina| Oliviera|Producción|    01/06/2020|06/30/2022|   N7|          Grupo A|                 4|       Rango 6|       Rango 6|      6|            SI|  6|         Sonia|        Kamlasky|
+|  1|   Romina|    Brito| Marketing|    03/05/2018|12/31/2018|   N3|          Grupo B|                 3|       Rango 3|       Rango 3|      1|            SI|  1|       Rolando|           Casas|
+|  2|    Pedro|    Lujan|   Compras|    03/06/2017|12/31/2021|   N3|          Grupo B|                 3|       Rango 2|       Rango 2|      2|            SI|  2|        Marina|          Pitana|
+|  6| Catalina|    Gómez|Producción|    04/01/2019|03/31/2022|   N2|          Grupo B|                 4|       Rango 2|       Rango 2|      4|            NO|  4|        Miriam|          Pisani|
+| 11|  Roberto|    Pérez| Marketing|    07/01/2019|04/30/2022|   N5|          Grupo B|                 5|       Rango 5|       Rango 5|      9|            SI|  9|        Vanina|        Quintana|
+| 18|    Pedro|   Torres| Marketing|    04/03/2017|12/31/2019|   N3|          Grupo B|                 4|       Rango 3|       Rango 3|      9|            SI|  9|        Vanina|        Quintana|
+| 22|   Matias|  Bosques|    Ventas|    12/03/2018|06/30/2021|   N4|          Grupo B|                 3|       Rango 4|       Rango 4|      8|            SI|  8|       Ricardo|         Ronaldo|
+| 25| Carolina| Petersen|    Ventas|    07/05/2021|02/28/2022|   N7|          Grupo B|                 4|       Rango 6|       Rango 6|      8|            SI|  8|       Ricardo|         Ronaldo|
+| 26|   Fabian|   Quiroz|Producción|    05/07/2018|09/30/2021|   N3|          Grupo B|                 3|       Rango 2|       Rango 3|      6|            SI|  6|         Sonia|        Kamlasky|
+|  3|     Juan| Albornoz|        IT|    06/04/2018|04/30/2019|   N4|          Grupo C|                 4|       Rango 4|       Rango 4|      5|            NO|  5|     Alejandro|        Pitorino|
++---+---------+---------+----------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+
+only showing top 20 rows
+
+>>> ```
+  File "<stdin>", line 1
+    ```
+    ^
+SyntaxError: invalid syntax
+>>> 
+>>> In this code:
+  File "<stdin>", line 1
+    In this code:
+       ^
+SyntaxError: invalid syntax
+>>> 
+>>> - We use the `withColumnRenamed` function to rename the columns in the `df_managers` DataFrame.
+  File "<stdin>", line 1
+    - We use the `withColumnRenamed` function to rename the columns in the `df_managers` DataFrame.
+         ^
+SyntaxError: invalid syntax
+>>> - Then, we perform the join between the `df` and `df_managers_renamed` DataFrames.
+  File "<stdin>", line 1
+    - Then, we perform the join between the `df` and `df_managers_renamed` DataFrames.
+               ^
+SyntaxError: invalid syntax
+>>> - Finally, we show the resulting DataFrame `dfjoin`.
+  File "<stdin>", line 1
+    - Finally, we show the resulting DataFrame `dfjoin`.
+                  ^
+SyntaxError: invalid syntax
+>>> 
+>>> This code achieves column renaming in PySpark DataFrames using only Python, without SQL.
+Traceback (most recent call last):
+  File "/home/hadoop/spark/python/pyspark/context.py", line 293, in signal_handler
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+>>> #uuuuy se me fue un boton ! oh no!
+>>> df_managers_renamed.show(5)
++---+--------------+----------------+                                           
+| Id|Nombre_Manager|Apellido_Manager|
++---+--------------+----------------+
+|  1|       Rolando|           Casas|
+|  2|        Marina|          Pitana|
+|  3|          José|        Feligres|
+|  4|        Miriam|          Pisani|
+|  5|     Alejandro|        Pitorino|
++---+--------------+----------------+
+only showing top 5 rows
+
+>>> dfjoin = df.join(df_managers_renamed, df.Manager == df_managers_renamed.Id, "inner")
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+
+>>> #va quedando bonito
+>>> df.select('Rango Salarial').show(5)
++--------------+
+|Rango Salarial|
++--------------+
+|       Rango 2|
+|       Rango 4|
+|       Rango 3|
+|       Rango 3|
+|       Rango 4|
++--------------+
+only showing top 5 rows
+
+>>> df_rangos.show(5)
++-------+------+------+
+|  Rango| desde| hasta|
++-------+------+------+
+|Rango 1|150000|200000|
+|Rango 2|200001|250000|
+|Rango 3|250001|300000|
+|Rango 4|300001|350000|
+|Rango 5|350001|400000|
++-------+------+------+
+only showing top 5 rows
+
+>>> df_rangos.printSchema()
+root
+ |-- Rango: string (nullable = true)
+ |-- desde: string (nullable = true)
+ |-- hasta: string (nullable = true)
+
+>>> #voy a unir las tables, y luego hacer las transformaciones
+>>> df_rangos_renamed = df_rangos \
+... .withColumnRenamed("desde", "sueldo en rublos desde") \
+... .withColumnRenamed("hasta", "sueldo en rublos hasta")
+>>> df_rangos.printSchema()
+root
+ |-- Rango: string (nullable = true)
+ |-- desde: string (nullable = true)
+ |-- hasta: string (nullable = true)
+
+>>> df_rangos_renamed.printSchema()
+root
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> dfjoin = dfjoin.join(df_rangos_renamed, dfjoin.select('Rango Salarial') == df_rangos_renamed.Rango, "inner")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/column.py", line 111, in _
+    njc = getattr(self._jc, name)(jc)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1301, in __call__
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1271, in _build_args
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1271, in <listcomp>
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/protocol.py", line 298, in get_command_part
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1659, in __getattr__
+    raise AttributeError(
+AttributeError: 'DataFrame' object has no attribute '_get_object_id'
+>>> #aca gpt me sugiere hacerlo onda pandas... veamos
+>>> dfjoin = dfjoin.join(df_rangos_renamed, dfjoin['Rango Salarial'] == df_rangos_renamed['Rango'], "inner")
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> #bien gpt!
+>>> #voy a tener mi raw table, despues la mando a hive
+>>> dfjoin.show(8)
++---+---------+---------+---------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+| Id|   Nombre| Apellido|     Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment|Rango Salarial|RS competencia|Manager|Realizo Cursos| Id|Nombre_Manager|Apellido_Manager|  Rango|sueldo en rublos desde|sueldo en rublos hasta|
++---+---------+---------+---------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+|  4|Sebastian| González|  Legales|    05/07/2018|05/30/2021|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      3|            SI|  3|          José|        Feligres|Rango 2|                200001|                250000|
+|  7| Anabella|Fernández|   Ventas|    07/06/2020|03/31/2021|   N4|          Grupo A|                 3|       Rango 4|       Rango 4|      8|            NO|  8|       Ricardo|         Ronaldo|Rango 4|                300001|                350000|
+|  8|Francesca|    López|  Compras|    01/02/2017|06/30/2021|   N3|          Grupo A|                 4|       Rango 3|       Rango 3|      2|            SI|  2|        Marina|          Pitana|Rango 3|                250001|                300000|
+| 10|      Ana|     Diaz|       IT|    03/06/2017|11/30/2020|   N4|          Grupo A|                 3|       Rango 3|       Rango 3|      7|            NO|  7|        Martín|          Viglia|Rango 3|                250001|                300000|
+| 13|Alejandro|   Romero|       IT|    06/01/2020|02/28/2022|   N3|          Grupo A|                 3|       Rango 4|       Rango 3|      7|            SI|  7|        Martín|          Viglia|Rango 4|                300001|                350000|
+| 15|   Analia|     Sosa|  Compras|    10/01/2018|11/30/2021|   N4|          Grupo A|                 4|       Rango 4|       Rango 4|      2|            NO|  2|        Marina|          Pitana|Rango 4|                300001|                350000|
+| 17|Guillermo|  Ramírez|       IT|    01/06/2020|05/31/2022|   N2|          Grupo A|                 3|       Rango 2|       Rango 2|      7|            NO|  7|        Martín|          Viglia|Rango 2|                200001|                250000|
+| 19|    Rocio|     Ruiz|Auditoria|    02/05/2018|01/30/2021|   N4|          Grupo A|                 4|       Rango 4|       Rango 5|     10|            NO| 10|        Daniel|         Quiroga|Rango 4|                300001|                350000|
++---+---------+---------+---------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+only showing top 8 rows
+
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> #tengo miedo de olvidarme de cargar esta df despues. Voy a dividir df_bronze df_silver y las otras tansfromaciones
+>>> df_bronze = dfjoin
+>>> df_bronze.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> dfjoin.select(['Nivel', 'Grupo recruitment', 'Tiempo recruitment', 'RS competencia', 'Rango).show(5)
+  File "<stdin>", line 1
+    dfjoin.select(['Nivel', 'Grupo recruitment', 'Tiempo recruitment', 'RS competencia', 'Rango).show(5)
+                                                                                                       ^
+SyntaxError: EOL while scanning string literal
+>>> dfjoin.select(['Nivel', 'Grupo recruitment', 'Tiempo recruitment', 'RS competencia', 'Rango']).show(5)
++-----+-----------------+------------------+--------------+-------+             
+|Nivel|Grupo recruitment|Tiempo recruitment|RS competencia|  Rango|
++-----+-----------------+------------------+--------------+-------+
+|   N2|          Grupo A|                 4|       Rango 2|Rango 2|
+|   N4|          Grupo A|                 3|       Rango 4|Rango 4|
+|   N3|          Grupo A|                 4|       Rango 3|Rango 3|
+|   N4|          Grupo A|                 3|       Rango 3|Rango 3|
+|   N3|          Grupo A|                 3|       Rango 3|Rango 4|
++-----+-----------------+------------------+--------------+-------+
+only showing top 5 rows
+
+>>> # Comenzamos con las transfromaciones
+>>> # Convertir ID a int
+>>> from pyspark.sql.types import IntegerType
+>>> 
+>>> df_silver = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1636, in __getitem__
+    jc = self._jdf.apply(item)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: Reference 'Id' is ambiguous, could be: Id, Id.
+>>> df_silver = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1636, in __getitem__
+    jc = self._jdf.apply(item)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: Reference 'Id' is ambiguous, could be: Id, Id.
+>>> dfjoin.show(1)
++---+---------+--------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+| Id|   Nombre|Apellido|   Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment|Rango Salarial|RS competencia|Manager|Realizo Cursos| Id|Nombre_Manager|Apellido_Manager|  Rango|sueldo en rublos desde|sueldo en rublos hasta|
++---+---------+--------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+|  4|Sebastian|González|Legales|    05/07/2018|05/30/2021|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      3|            SI|  3|          José|        Feligres|Rango 2|                200001|                250000|
++---+---------+--------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+---+--------------+----------------+-------+----------------------+----------------------+
+only showing top 1 row
+
+>>> df_silver = dfjoin \
+... .withColumn("Id", dfjoin["Id"].cast(IntegerType())) \
+... .withColumn("Fecha comienzo", dfjoin["Fecha comienzo"].cast(DateType())) \
+... .withColumn("Fecha fin", dfjoin["Fecha fin"].cast(DateType()))
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1636, in __getitem__
+    jc = self._jdf.apply(item)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: Reference 'Id' is ambiguous, could be: Id, Id.
+>>> # aaaaaah tengo 2 columnas id!
+>>> 
+Traceback (most recent call last):
+  File "/home/hadoop/spark/python/pyspark/context.py", line 293, in signal_handler
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+>>> killId2 = dfjoin.drop(dfjoin.columns[13])
+>>> killId2.printSchema()
+root
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> df_silver = killId2.withColumn("Id", killId2["Id"].cast(IntegerType()))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1636, in __getitem__
+    jc = self._jdf.apply(item)
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: Cannot resolve column name "Id" among (Nombre, Apellido, Area, Fecha comienzo, Fecha fin, Nivel, Grupo recruitment, Tiempo recruitment, Rango Salarial, RS competencia, Manager, Realizo Cursos, Nombre_Manager, Apellido_Manager, Rango, sueldo en rublos desde, sueldo en rublos hasta)
+>>> #me borro los dos Id, q onda queria borrar solo la columna 13
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> killNombre = dfjoin.drop(dfjoin.columns[1])
+>>> killNombre.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> killCurso = dfjoin.drop(dfjoin.columns[12])
+>>> killCurso.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Id: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> killIdDOS= dfjoin.drop(dfjoin.columns[13])
+>>> killIdDOS.printSchema()
+root
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> df_hhmmm = dfjoin.columns[1:2] + dfjoin.columns[12:14]
+>>> df_hhmmm.show(2)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'list' object has no attribute 'show'
+>>> df_managers_renamed = df_managers \
+...     .withColumnRenamed("Nombre", "Nombre_Manager") \
+... withColumnRenamed("Nombre", "Nombre_Manager") \
+  File "<stdin>", line 3
+    df_managers_renamed = df_managers \
+    .withColumnRenamed("Nombre", "Nombre_Manager") \
+withColumnRenamed("Nombre", "Nombre_Manager") \
+    ^
+SyntaxError: invalid syntax
+>>> df_managers_renamed = df_managers \
+... withColumnRenamed("Nombre", "Nombre_Manager") \
+  File "<stdin>", line 2
+    df_managers_renamed = df_managers \
+withColumnRenamed("Nombre", "Nombre_Manager") \
+    ^
+SyntaxError: invalid syntax
+>>> df_managers_renamed = df_managers \
+... .withColumnRenamed("Nombre", "Nombre_Manager") \
+... .withColumnRenamed("Id", "Id_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+>>> dfjoin = df.join(df_managers_renamed, df.Manager == df_managers_renamed.Id, "inner")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1659, in __getattr__
+    raise AttributeError(
+AttributeError: 'DataFrame' object has no attribute 'Id'
+>>> df_manager.printShcema
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df_manager' is not defined
+>>> df_managers_renamed = df_Managers \
+... .withColumnRenamed("Nombre", "Nombre_Manager") \
+... .withColumnRenamed("Id", "Id_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df_Managers' is not defined
+>>> df_managers.show(3)
++---+-------+--------+
+| Id| Nombre|Apellido|
++---+-------+--------+
+|  1|Rolando|   Casas|
+|  2| Marina|  Pitana|
+|  3|   José|Feligres|
++---+-------+--------+
+only showing top 3 rows
+
+>>> df_managers_renamed = df_managers \
+... .withColumnRenamed("Id", "Id_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+>>> df_managers2 = df_managers \
+... .withColumnRenamed("Id", "Id_Manager") \
+... .withColumnRenamed("Nombre", "Nombre_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+>>> df_manager2.printSchema()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df_manager2' is not defined
+>>> df_manager2.show(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df_manager2' is not defined
+>>> df_managers2.printSchema()
+root
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+
+>>> #mmm ahi esta... cambie el nombre del id por fin despues de muchos errores
+>>> dfjoin = df.join(df_managers2, df.Manager == df_managers2.Id_Manager, "inner")
+>>> dfjoin = dfjoin.join(df_rangos_renamed, dfjoin['Rango Salarial'] == df_rangos_renamed['Rango'], "inner")
+>>> dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> df_bronze = dfjoin
+>>> df_bronze.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+>>> df_bronze.show(5)
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+-------+----------------------+----------------------+
+| Id|   Nombre| Apellido|   Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment|Rango Salarial|RS competencia|Manager|Realizo Cursos|Id_Manager|Nombre_Manager|Apellido_Manager|  Rango|sueldo en rublos desde|sueldo en rublos hasta|
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+-------+----------------------+----------------------+
+|  4|Sebastian| González|Legales|    05/07/2018|05/30/2021|   N2|          Grupo A|                 4|       Rango 2|       Rango 2|      3|            SI|         3|          José|        Feligres|Rango 2|                200001|                250000|
+|  7| Anabella|Fernández| Ventas|    07/06/2020|03/31/2021|   N4|          Grupo A|                 3|       Rango 4|       Rango 4|      8|            NO|         8|       Ricardo|         Ronaldo|Rango 4|                300001|                350000|
+|  8|Francesca|    López|Compras|    01/02/2017|06/30/2021|   N3|          Grupo A|                 4|       Rango 3|       Rango 3|      2|            SI|         2|        Marina|          Pitana|Rango 3|                250001|                300000|
+| 10|      Ana|     Diaz|     IT|    03/06/2017|11/30/2020|   N4|          Grupo A|                 3|       Rango 3|       Rango 3|      7|            NO|         7|        Martín|          Viglia|Rango 3|                250001|                300000|
+| 13|Alejandro|   Romero|     IT|    06/01/2020|02/28/2022|   N3|          Grupo A|                 3|       Rango 4|       Rango 3|      7|            SI|         7|        Martín|          Viglia|Rango 4|                300001|                350000|
++---+---------+---------+-------+--------------+----------+-----+-----------------+------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+-------+----------------------+----------------------+
+only showing top 5 rows
+
+>>> #ahora volvamos a la etapa silver
+>>> # CONVERTIR ID EN INT
+>>> from pyspark.sql.types import IntegerType
+>>> 
+>>> df_silver = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+>>> # CAST DATETIME
+>>> from pyspark.sql.functions import to_date
+>>> df_silver = df_silver \
+... .withColumn("Fecha comienzo", to_date(df_silver["Fecha comienzo"], "yyyy-MM-dd")) \
+... .withColumn("Fecha fin", to_date(df_silver["Fecha fin"], "yyyy-MM-dd"))
+>>> # CALCULAR DIAS TRABAJADOS
+>>> from pyspark.sql.functions import datediff
+>>> df_silver = df_silver.withColumn("dias trabajados", datediff(df_silver["Fecha fin"], df_silver["Fecha comienzo"]))
+>>> df_silver.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias trabajados: integer (nullable = true)
+
+>>> df_silver = df_silver.withColumn("dias_trabajados", datediff(df_silver["Fecha fin"], df_silver["Fecha comienzo"]))
+>>> df_silver.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias trabajados: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silver = df_silver.drop('dias trabajados)
+  File "<stdin>", line 1
+    df_silver = df_silver.drop('dias trabajados)
+                                               ^
+SyntaxError: EOL while scanning string literal
+>>> df_silver = df_silver.drop('dias trabajados')
+>>> df_silver.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silver.diastrabajdos.show(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1659, in __getattr__
+    raise AttributeError(
+AttributeError: 'DataFrame' object has no attribute 'diastrabajdos'
+>>> df_silver.dias_trabajados.show(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'Column' object is not callable
+>>> df_silver['dias_trabajados'].show(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'Column' object is not callable
+>>> df_silver.select('dias_trabajados').show(3)
+[Stage 27:>                                                         (0 + 1                                                                          +---------------+
+|dias_trabajados|
++---------------+
+|           null|
+|           null|
+|           null|
++---------------+
+only showing top 3 rows
+
+>>> 
+Traceback (most recent call last):
+  File "/home/hadoop/spark/python/pyspark/context.py", line 293, in signal_handler
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+>>> df_silver = df_silver.withColumn("dias_trabajados", datediff(df_silver["Fecha fin"], df_silver["Fecha comienzo"]))
+>>> df_silver.select('dias_trabajados').show(3)
++---------------+
+|dias_trabajados|
++---------------+
+|           null|
+|           null|
+|           null|
++---------------+
+only showing top 3 rows
+
+>>> df_silver.select(['Fecha comienzo', 'Fecha fin', 'dias_trabajados').show(3)
+  File "<stdin>", line 1
+    df_silver.select(['Fecha comienzo', 'Fecha fin', 'dias_trabajados').show(3)
+                                                                      ^
+SyntaxError: closing parenthesis ')' does not match opening parenthesis '['
+>>> df_silver.select(['Fecha comienzo', 'Fecha fin', 'dias_trabajados']).show(3)
++--------------+---------+---------------+
+|Fecha comienzo|Fecha fin|dias_trabajados|
++--------------+---------+---------------+
+|          null|     null|           null|
+|          null|     null|           null|
+|          null|     null|           null|
++--------------+---------+---------------+
+only showing top 3 rows
+
+>>> df_bronze.select(['Fecha comienzo', 'Fecha fin', 'dias_trabajados']).show(3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1685, in select
+    jdf = self._jdf.select(self._jcols(*cols))
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: cannot resolve 'dias_trabajados' given input columns: [Apellido, Apellido_Manager, Area, Fecha comienzo, Fecha fin, Grupo recruitment, Id, Id_Manager, Manager, Nivel, Nombre, Nombre_Manager, RS competencia, Rango, Rango Salarial, Realizo Cursos, Tiempo recruitment, sueldo en rublos desde, sueldo en rublos hasta];
+'Project [Fecha comienzo#20, Fecha fin#21, 'dias_trabajados]
++- Join Inner, (Rango Salarial#25 = Rango#80)
+   :- Join Inner, (Manager#27 = Id_Manager#802)
+   :  :- Relation [Id#16,Nombre#17,Apellido#18,Area#19,Fecha comienzo#20,Fecha fin#21,Nivel#22,Grupo recruitment#23,Tiempo recruitment#24,Rango Salarial#25,RS competencia#26,Manager#27,Realizo Cursos#28] csv
+   :  +- Project [Id_Manager#802, Nombre_Manager#806, Apellido#60 AS Apellido_Manager#810]
+   :     +- Project [Id_Manager#802, Nombre#59 AS Nombre_Manager#806, Apellido#60]
+   :        +- Project [Id#58 AS Id_Manager#802, Nombre#59, Apellido#60]
+   :           +- Relation [Id#58,Nombre#59,Apellido#60] csv
+   +- Project [Rango#80, sueldo en rublos desde#423, hasta#82 AS sueldo en rublos hasta#427]
+      +- Project [Rango#80, desde#81 AS sueldo en rublos desde#423, hasta#82]
+         +- Relation [Rango#80,desde#81,hasta#82] csv
+
+>>> df_bronze.select(['Fecha comienzo', 'Fecha fin']).show(3)
++--------------+----------+
+|Fecha comienzo| Fecha fin|
++--------------+----------+
+|    05/07/2018|05/30/2021|
+|    07/06/2020|03/31/2021|
+|    01/02/2017|06/30/2021|
++--------------+----------+
+only showing top 3 rows
+
+>>> df_silver_id = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+>>> df_silver_datetime = df_silver_id \
+... .withColumn("Fecha comienzo", to_date(df_silver_id["Fecha comienzo"], "MM-dd-yyyy")) \
+... .withColumn("Fecha fin", to_date(df_silver_id["Fecha fin"], "MM-dd-yyyy"))
+>>> df_silver_datetime.select(['Fecha fin', 'Fecha comienzo']).show(4)
++---------+--------------+
+|Fecha fin|Fecha comienzo|
++---------+--------------+
+|     null|          null|
+|     null|          null|
+|     null|          null|
+|     null|          null|
++---------+--------------+
+only showing top 4 rows
+
+>>> df_silver_id = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+>>> df_silver_datetime.select(['Fecha fin', 'Fecha comienzo']).show(4)
++---------+--------------+
+|Fecha fin|Fecha comienzo|
++---------+--------------+
+|     null|          null|
+|     null|          null|
+|     null|          null|
+|     null|          null|
++---------+--------------+
+only showing top 4 rows
+
+>>> df_silver_datetime = df_silver_id \
+... .withColumn("Fecha comienzo", to_date(df_silver_id["Fecha comienzo"], "MM-dd-yyyy")) \
+... .withColumn("Fecha fin", to_date(df_silver_id["Fecha fin"], "MM-dd-yyyy"))
+>>> df_silver_datetime.select(['Fecha fin', 'Fecha comienzo']).show(4)
++---------+--------------+
+|Fecha fin|Fecha comienzo|
++---------+--------------+
+|     null|          null|
+|     null|          null|
+|     null|          null|
+|     null|          null|
++---------+--------------+
+only showing top 4 rows
+
+>>> from pyspark.sql.functions import to_date
+>>> df_silver_datetime = df_silver_id \
+... .withColumn("Fecha comienzo", to_date(df_silver_id["Fecha comienzo"], "MM/dd/yyyy"))
+>>> df_silver_datetime = df_silver_datetime \
+... .withColumn("Fecha fin", to_date(df_silver_datetime["Fecha fin"], "MM/dd/yyyy"))
+>>> df_silver_datetime.select(['Fecha fin', 'Fecha comienzo']).show(4)
++----------+--------------+
+| Fecha fin|Fecha comienzo|
++----------+--------------+
+|2021-05-30|    2018-05-07|
+|2021-03-31|    2020-07-06|
+|2021-06-30|    2017-01-02|
+|2020-11-30|    2017-03-06|
++----------+--------------+
+only showing top 4 rows
+
+>>> # al fin, gracias gpt no se q cambiaste pero gracias!
+>>> df_silver_diastrabajados = df_silver_datetime.withColumn("dias_trabajados", datediff(df_silver_datetime["Fecha fin"], df_silver_datetime["Fecha comienzo"]))
+>>> df_silver_diastrabajados.select(['Fecha fin', 'Fecha comienzo', 'dias_trabajados]).show(4)
+  File "<stdin>", line 1
+    df_silver_diastrabajados.select(['Fecha fin', 'Fecha comienzo', 'dias_trabajados]).show(4)
+                                                                                             ^
+SyntaxError: EOL while scanning string literal
+>>> df_silver_diastrabajados.select(['Fecha fin', 'Fecha comienzo', 'dias_trabajados']).show(4)
++----------+--------------+---------------+
+| Fecha fin|Fecha comienzo|dias_trabajados|
++----------+--------------+---------------+
+|2021-05-30|    2018-05-07|           1119|
+|2021-03-31|    2020-07-06|            268|
+|2021-06-30|    2017-01-02|           1640|
+|2020-11-30|    2017-03-06|           1365|
++----------+--------------+---------------+
+only showing top 4 rows
+
+>>> df_silver_diastrabajados.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> from pyspark.sql.functions import regexp_replace
+>>> # QUITAR LA N EN LA COLUMNA NIVEL Y PASAR A INT LA COLUMNA
+>>> df_silver = df_silver.withColumn("Nivel", regexp_replace(df_silver["Nivel"], "N", ""))
+>>> df_silver_N = df_silver_diastrabajados.withColumn("Nivel", regexp_replace(df_silver_diastrabajados["Nivel"], "N", ""))
+>>> df_silver_N.select('Nivel')
+DataFrame[Nivel: string]
+>>> df_silver_N.select('Nivel').show(4)
++-----+
+|Nivel|
++-----+
+|    2|
+|    4|
+|    3|
+|    4|
++-----+
+only showing top 4 rows
+
+>>> df_silver_N.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> 
+Traceback (most recent call last):
+  File "/home/hadoop/spark/python/pyspark/context.py", line 293, in signal_handler
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+>>> df_silver_Nivel_casted = df_silver_N.withColumn("Nivel_int", df_silver_N["Nivel"].cast("int"))
+>>> df_silver_Nivel_casted.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- Nivel_int: integer (nullable = true)
+
+>>> df_silver_Nivel = df_silver_Nivel_casted.drop('Nivel')_
+  File "<stdin>", line 1
+    df_silver_Nivel = df_silver_Nivel_casted.drop('Nivel')_
+                                                          ^
+SyntaxError: invalid syntax
+>>> df_silver_N = df_silver_N.withColumn("Nivel", df_silver_N["Nivel"].cast("int"))
+>>> df_silver_N.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silverG = df_silver_N.withColumn("Grupo recruitment", regexp_replace(df_silver_N["Grupo recruitment"], "Grupo", ""))
+>>> df_silverG = df_silverG.withColumn("Grupo recruitment", df_silverG["Grupo recruitment"].cast("int"))
+>>> df_silverG.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: integer (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silverG.select(['Id', 'Nivel', 'Grupo', 'dias_trabaados']).show(4)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1685, in select
+    jdf = self._jdf.select(self._jcols(*cols))
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: cannot resolve 'Grupo' given input columns: [Apellido, Apellido_Manager, Area, Fecha comienzo, Fecha fin, Grupo recruitment, Id, Id_Manager, Manager, Nivel, Nombre, Nombre_Manager, RS competencia, Rango, Rango Salarial, Realizo Cursos, Tiempo recruitment, dias_trabajados, sueldo en rublos desde, sueldo en rublos hasta];
+'Project [Id#1264, Nivel#1534, 'Grupo, 'dias_trabaados]
++- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#1534, cast(Grupo recruitment#1555 as int) AS Grupo recruitment#1576, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+   +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#1534, regexp_replace(Grupo recruitment#23, Grupo, , 1) AS Grupo recruitment#1555, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+      +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, cast(Nivel#1479 as int) AS Nivel#1534, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+         +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, regexp_replace(Nivel#22, N, , 1) AS Nivel#1479, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+            +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, datediff(Fecha fin#1378, Fecha comienzo#1358) AS dias_trabajados#1415]
+               +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, to_date(Fecha fin#21, Some(MM/dd/yyyy)) AS Fecha fin#1378, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                  +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, to_date(Fecha comienzo#20, Some(MM/dd/yyyy)) AS Fecha comienzo#1358, Fecha fin#21, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                     +- Project [cast(Id#16 as int) AS Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#20, Fecha fin#21, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                        +- Join Inner, (Rango Salarial#25 = Rango#80)
+                           :- Join Inner, (Manager#27 = Id_Manager#802)
+                           :  :- Relation [Id#16,Nombre#17,Apellido#18,Area#19,Fecha comienzo#20,Fecha fin#21,Nivel#22,Grupo recruitment#23,Tiempo recruitment#24,Rango Salarial#25,RS competencia#26,Manager#27,Realizo Cursos#28] csv
+                           :  +- Project [Id_Manager#802, Nombre_Manager#806, Apellido#60 AS Apellido_Manager#810]
+                           :     +- Project [Id_Manager#802, Nombre#59 AS Nombre_Manager#806, Apellido#60]
+                           :        +- Project [Id#58 AS Id_Manager#802, Nombre#59, Apellido#60]
+                           :           +- Relation [Id#58,Nombre#59,Apellido#60] csv
+                           +- Project [Rango#80, sueldo en rublos desde#423, hasta#82 AS sueldo en rublos hasta#427]
+                              +- Project [Rango#80, desde#81 AS sueldo en rublos desde#423, hasta#82]
+                                 +- Relation [Rango#80,desde#81,hasta#82] csv
+
+>>> df_silverG.select(['Id', 'Nivel', 'Grupo recruitment', 'dias_trabaados']).show(4)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/hadoop/spark/python/pyspark/sql/dataframe.py", line 1685, in select
+    jdf = self._jdf.select(self._jcols(*cols))
+  File "/home/hadoop/spark/python/lib/py4j-0.10.9.2-src.zip/py4j/java_gateway.py", line 1309, in __call__
+  File "/home/hadoop/spark/python/pyspark/sql/utils.py", line 117, in deco
+    raise converted from None
+pyspark.sql.utils.AnalysisException: cannot resolve 'dias_trabaados' given input columns: [Apellido, Apellido_Manager, Area, Fecha comienzo, Fecha fin, Grupo recruitment, Id, Id_Manager, Manager, Nivel, Nombre, Nombre_Manager, RS competencia, Rango, Rango Salarial, Realizo Cursos, Tiempo recruitment, dias_trabajados, sueldo en rublos desde, sueldo en rublos hasta];
+'Project [Id#1264, Nivel#1534, Grupo recruitment#1576, 'dias_trabaados]
++- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#1534, cast(Grupo recruitment#1555 as int) AS Grupo recruitment#1576, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+   +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#1534, regexp_replace(Grupo recruitment#23, Grupo, , 1) AS Grupo recruitment#1555, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+      +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, cast(Nivel#1479 as int) AS Nivel#1534, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+         +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, regexp_replace(Nivel#22, N, , 1) AS Nivel#1479, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, dias_trabajados#1415]
+            +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, Fecha fin#1378, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427, datediff(Fecha fin#1378, Fecha comienzo#1358) AS dias_trabajados#1415]
+               +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#1358, to_date(Fecha fin#21, Some(MM/dd/yyyy)) AS Fecha fin#1378, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                  +- Project [Id#1264, Nombre#17, Apellido#18, Area#19, to_date(Fecha comienzo#20, Some(MM/dd/yyyy)) AS Fecha comienzo#1358, Fecha fin#21, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                     +- Project [cast(Id#16 as int) AS Id#1264, Nombre#17, Apellido#18, Area#19, Fecha comienzo#20, Fecha fin#21, Nivel#22, Grupo recruitment#23, Tiempo recruitment#24, Rango Salarial#25, RS competencia#26, Manager#27, Realizo Cursos#28, Id_Manager#802, Nombre_Manager#806, Apellido_Manager#810, Rango#80, sueldo en rublos desde#423, sueldo en rublos hasta#427]
+                        +- Join Inner, (Rango Salarial#25 = Rango#80)
+                           :- Join Inner, (Manager#27 = Id_Manager#802)
+                           :  :- Relation [Id#16,Nombre#17,Apellido#18,Area#19,Fecha comienzo#20,Fecha fin#21,Nivel#22,Grupo recruitment#23,Tiempo recruitment#24,Rango Salarial#25,RS competencia#26,Manager#27,Realizo Cursos#28] csv
+                           :  +- Project [Id_Manager#802, Nombre_Manager#806, Apellido#60 AS Apellido_Manager#810]
+                           :     +- Project [Id_Manager#802, Nombre#59 AS Nombre_Manager#806, Apellido#60]
+                           :        +- Project [Id#58 AS Id_Manager#802, Nombre#59, Apellido#60]
+                           :           +- Relation [Id#58,Nombre#59,Apellido#60] csv
+                           +- Project [Rango#80, sueldo en rublos desde#423, hasta#82 AS sueldo en rublos hasta#427]
+                              +- Project [Rango#80, desde#81 AS sueldo en rublos desde#423, hasta#82]
+                                 +- Relation [Rango#80,desde#81,hasta#82] csv
+
+>>> df_silverG.select(['Id', 'Nivel', 'Grupo recruitment', 'dias_trabajados']).show(4)
++---+-----+-----------------+---------------+
+| Id|Nivel|Grupo recruitment|dias_trabajados|
++---+-----+-----------------+---------------+
+|  4|    2|             null|           1119|
+|  7|    4|             null|            268|
+|  8|    3|             null|           1640|
+| 10|    4|             null|           1365|
++---+-----+-----------------+---------------+
+only showing top 4 rows
+
+>>> df_silverG = df_silver_N.withColumn("Grupo recruitment", regexp_replace(df_silver_N["Grupo recruitment"], "Grupo", ""))
+>>> df_silverG.select(['Id', 'Nivel', 'Grupo recruitment', 'dias_trabajados']).show(4)
++---+-----+-----------------+---------------+
+| Id|Nivel|Grupo recruitment|dias_trabajados|
++---+-----+-----------------+---------------+
+|  4|    2|                A|           1119|
+|  7|    4|                A|            268|
+|  8|    3|                A|           1640|
+| 10|    4|                A|           1365|
++---+-----+-----------------+---------------+
+only showing top 4 rows
+
+>>> #TIEMPO  RECRUITMENT A SEMANAS
+>>> df_silver = df_silver.withColumnRenamed("Tiempo recruitment", "Tiempo recruitment en semanas")
+>>> df_silverTR = df_silverG.withColumnRenamed("Tiempo recruitment", "Tiempo recruitment en semanas")
+>>> df_silverTR.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silverTR.select('Tiempo recruitment en semanas').show(4)
++-----------------------------+
+|Tiempo recruitment en semanas|
++-----------------------------+
+|                            4|
+|                            3|
+|                            4|
+|                            3|
++-----------------------------+
+only showing top 4 rows
+
+>>> df_silverTR = df_silverTR.withColumn("Tiempo recruitment en semanas", df_silverTR["Tiempo recruitment en semanas"].cast("int"))
+>>> df_silverTR.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+>>> df_silverTR.select(['Rango Salarial', 'Rango', 'RS competencia']).show(4)
++--------------+-------+--------------+
+|Rango Salarial|  Rango|RS competencia|
++--------------+-------+--------------+
+|       Rango 2|Rango 2|       Rango 2|
+|       Rango 4|Rango 4|       Rango 4|
+|       Rango 3|Rango 3|       Rango 3|
+|       Rango 3|Rango 3|       Rango 3|
++--------------+-------+--------------+
+only showing top 4 rows
+
+>>> df_RS = df_silverTR.drop('Rango')
+>>> # ESTAMOS TRABAJANDO RANGO, REMOVEMOS LA COLUMNA DUPLICADA, SACAMOS LA PALABRA RANGO Y PASAMOS A IN, ADEMAS PASAMOS LOS SUELDOS A PROMEDIO PARA TENER UN SOLO NUMERO Y NO DOS
+>>> df_silver = df_silver \
+... 
+>>> df_RS = df_RS \
+... .withColumn("Rango Salarial", regexp_replace(df_RS["Rango Salarial"], "Rango", "")) \
+... .withColumn("RS compentencia", regexp_replace(df_RS["RS competencia"], "Rango", "")) \
+...     .withColumn("avg salario en rublos", (df_RS["sueldo en rublos desde"] + df_RS["sueldo en rublos hasta"]) / 2)
+>>> df_RS.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- RS compentencia: string (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+>>> df_RS = df_RS \
+... .withColumn("Rango Salarial", regexp_replace(df_RS["Rango Salarial"], "Rango", "")) \
+... .withColumn("RS competencia", regexp_replace(df_RS["RS compentecia"], "Rango", ""))
+
+
+hadoop@7e7bdeaf0621:/$ #ops!
+hadoop@7e7bdeaf0621:/$ spark
+bash: spark: command not found
+hadoop@7e7bdeaf0621:/$ pyspark
+Python 3.8.10 (default, Mar 15 2022, 12:22:08) 
+[GCC 9.4.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/home/hadoop/spark/jars/spark-unsafe_2.12-3.2.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+2024-05-08 17:28:24,129 WARN conf.HiveConf: HiveConf of name hive.metastore.local does not exist
+2024-05-08 17:28:24,435 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2024-05-08 17:28:28,686 WARN yarn.Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.2.0
+      /_/
+
+Using Python version 3.8.10 (default, Mar 15 2022 12:22:08)
+Spark context Web UI available at http://7e7bdeaf0621:4040
+Spark context available as 'sc' (master = yarn, app id = application_1715188048538_0005).
+SparkSession available as 'spark'.
+>>> df_RS.printSchema()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'df_RS' is not defined
+>>> # OH NO, PERDI TODO!
+>>> df = spark.read.option("header", "true").csv("/ingest/RowData.csv")
+[Stage 0:>                                                          (0 + 1[Stage 0:===========================================================(1 + 0                                                                          >>> df_managers = spark.read.option("header", "true").csv("/ingest/Managers.csv")
+[Stage 1:>                                                          (0 + 1                                                                          >>> dfjoin = df.join(df_managers, df.Manager == df_managers.Id, "inner")

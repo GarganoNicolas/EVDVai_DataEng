@@ -1,0 +1,133 @@
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+root@7e7bdeaf0621:/# su hadoop
+hadoop@7e7bdeaf0621:/$ hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/hadoop/hive/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/hadoop/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+
+Logging initialized using configuration in jar:file:/home/hadoop/hive/lib/hive-common-2.3.9.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.hadoop.hive.common.StringInternUtils (file:/home/hadoop/hive/lib/hive-common-2.3.9.jar) to field java.net.URI.string
+WARNING: Please consider reporting this to the maintainers of org.apache.hadoop.hive.common.StringInternUtils
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+hive> show databases;
+OK
+default
+edvai_rrhh
+tripdata
+tripsdb
+Time taken: 5.193 seconds, Fetched: 4 row(s)
+hive> use edvai_rrhh
+    > ;
+OK
+Time taken: 0.15 seconds
+hive> CREATE EXTERNAL TABLE bronze (
+    >     Id STRING,
+    >     Nombre STRING,
+    >     Apellido STRING,
+    >     Area STRING,
+    >     `Fecha comienzo` STRING,
+    >     `Fecha fin` STRING,
+    >     Nivel STRING,
+    >     `Grupo recruitment` STRING,
+    >     `Tiempo recruitment` STRING,
+    >     `Rango Salarial` STRING,
+    >     `RS competencia` STRING,
+    >     Manager STRING,
+    >     `Realizo Cursos` STRING,
+    >     Id_Manager STRING,
+    >     Nombre_Manager STRING,
+    >     Apellido_Manager STRING,
+    >     Rango STRING,
+    >     `sueldo en rublos desde` STRING,
+    >     `sueldo en rublos hasta` STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/edvai_rrhh';
+OK
+Time taken: 2.427 seconds
+hive> 
+    > CREATE EXTERNAL TABLE silver (
+    >     Id INT,
+    >     Nombre STRING,
+    >     Apellido STRING,
+    >     Area STRING,
+    >     `Fecha comienzo` DATE,
+    >     `Fecha fin` DATE,
+    >     Nivel INT,
+    >     `Grupo recruitment` STRING,
+    >     `Tiempo recruitment en semanas` INT,
+    >     `Rango Salarial` INT,
+    >     `RS competencia` INT,
+    >     Manager STRING,
+    >     `Realizo Cursos` STRING,
+    >     Id_Manager STRING,
+    >     Nombre_Manager STRING,
+    >     Apellido_Manager STRING,
+    >     `sueldo en rublos desde` INT,
+    >     `sueldo en rublos hasta` INT,
+    >     dias_trabajados INT,
+    >     `avg salario en rublos` DOUBLE
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/edvai_rrhh';
+OK
+Time taken: 0.266 seconds
+hive> CREATE EXTERNAL TABLE grupo_a (
+    >     Id INT,
+    >     Nombre STRING,
+    >     Apellido STRING,
+    >     Area STRING,
+    >     Manager STRING,
+    >     Nombre_Manager STRING,
+    >     Apellido_Manager STRING,
+    >     Nivel INT,
+    >     dias_trabajados INT,
+    >     `avg salario en rublos` DOUBLE
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/grupo_a';
+OK
+Time taken: 0.361 seconds
+hive> CREATE EXTERNAL TABLE grupo_b (
+    >     Id INT,
+    >     Nombre STRING,
+    >     Apellido STRING,
+    >     Area STRING,
+    >     Manager STRING,
+    >     Nombre_Manager STRING,
+    >     Apellido_Manager STRING,
+    >     Nivel INT,
+    >     dias_trabajados INT,
+    >     `avg salario en rublos` DOUBLE
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/grupo_b';
+OK
+Time taken: 0.263 seconds
+hive> CREATE EXTERNAL TABLE grupo_c (
+    >     Id INT,
+    >     Nombre STRING,
+    >     Apellido STRING,
+    >     Area STRING,
+    >     Manager STRING,
+    >     Nombre_Manager STRING,
+    >     Apellido_Manager STRING,
+    >     Nivel INT,
+    >     dias_trabajados INT,
+    >     `avg salario en rublos` DOUBLE
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LOCATION '/tables/external/grupo_c';
+OK
+Time taken: 0.231 seconds
+hive> 
