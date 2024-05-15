@@ -1,0 +1,491 @@
+# LOAD DATA
+
+
+df = spark.read.option("header", "true").csv("/ingest/RowData.csv")
+
+df_managers = spark.read.option("header", "true").csv("/ingest/Managers.csv")
+
+df_managers2 = df_managers \
+... .withColumnRenamed("Id", "Id_Manager") \
+... .withColumnRenamed("Nombre", "Nombre_Manager") \
+... .withColumnRenamed("Apellido", "Apellido_Manager")
+
+df_managers2.printSchema()
+root
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+
+
+dfjoin = df.join(df_managers2, df.Manager == df_managers2.Id_Manager, "inner")
+
+df_rangos = spark.read.option("header", "true").csv("/ingest/Rangos.csv")
+
+df_rangos_renamed = df_rangos \
+... .withColumnRenamed("desde", "sueldo en rublos desde") \
+... .withColumnRenamed("hasta", "sueldo en rublos hasta")
+
+dfjoin = dfjoin.join(df_rangos_renamed, dfjoin['Rango Salarial'] == df_rangos_renamed['Rango'], "inner")
+
+
+dfjoin.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+
+# DATA LOADED
+
+# START TRANSFORMATIONS
+
+# Me quedo con la tabla original guardada, con las breves transformaciones iniciales
+# Id_Manager, Nombre y apellido del manager y sueldos
+
+
+df_bronze = dfjoin
+
+
+# CAST ID INT
+
+from pyspark.sql.types import IntegerType
+df_silver_id = dfjoin.withColumn("Id", dfjoin["Id"].cast(IntegerType()))
+
+# CAST DATE fechas
+# Voy renombrando la tabla a cada transformacion
+# En caso que algo falle puedo volver a la transformacion anterior
+# A su vez el nombre identifica que tipo de transformacion estoy haciendo
+
+
+from pyspark.sql.functions import to_date
+df_silver_datetime = df_silver_id \
+... .withColumn("Fecha fin", to_date(df_silver_id["Fecha fin"], "MM/dd/yyyy"))
+df_silver_datetime = df_silver_datetime \
+... .withColumn("Fecha comienzo", to_date(df_silver_datetime["Fecha comienzo"], "MM/dd/yyyy"))
+
+
+# REVISO QUE LAS TRANSFORMACIONES ESTEN BIEN
+
+df_silver_datetime.select(['Fecha fin', 'Fecha comienzo']).show(4)
+[Stage 4:>                  (0 + 1) / 1][Stage 5:>                  (0 + 1                                                                          [Stage 6:>                                                          (0 + 1                                                                          +----------+--------------+
+| Fecha fin|Fecha comienzo|
++----------+--------------+
+|2021-05-30|    2018-05-07|
+|2021-03-31|    2020-07-06|
+|2021-06-30|    2017-01-02|
+|2020-11-30|    2017-03-06|
++----------+--------------+
+only showing top 4 rows
+
+
+# CREO UNA NUEVA COLUMNA PARA LOS DIAS TRABAJADOS
+
+from pyspark.sql.functions import datediff
+df_silver_diastrabajados = df_silver_datetime.withColumn("dias_trabajados", datediff(df_silver_datetime["Fecha fin"], df_silver_datetime["Fecha comienzo"]))
+
+# REVISION
+df_silver_diastrabajados.select(['Fecha fin', 'Fecha comienzo', 'dias_trabajados']).show(4)
+
+| Fecha fin|Fecha comienzo|dias_trabajados|
++----------+--------------+---------------+
+|2021-05-30|    2018-05-07|           1119|
+|2021-03-31|    2020-07-06|            268|
+|2021-06-30|    2017-01-02|           1640|
+|2020-11-30|    2017-03-06|           1365|
++----------+--------------+---------------+
+only showing top 4 rows
+
+df_silver_diastrabajados.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+
+# QUITAR LA N EN LA COLUMNA NIVEL Y PASAR A INT LA COLUMNA
+
+from pyspark.sql.functions import regexp_replace
+df_silver_N = df_silver_diastrabajados.withColumn("Nivel", regexp_replace(df_silver_diastrabajados["Nivel"], "N", ""))
+df_silver_N.select('Nivel').show(4)
+
+|Nivel|
++-----+
+|    2|
+|    4|
+|    3|
+|    4|
++-----+
+only showing top 4 rows
+
+# Hago el cast y luego reviso en el schema
+df_silver_N = df_silver_N.withColumn("Nivel", df_silver_N["Nivel"].cast("int"))
+
+df_silver_N.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+
+
+# REMUEGO LA PALABRA GRUPO DE LA COLUMNA GRUPO
+# Recuerdo que en esta parte me trabe bastante queriendo convertirla a INT
+# Jejjee, son letras!
+
+df_silverG = df_silver_N.withColumn("Grupo recruitment", regexp_replace(df_silver_N["Grupo recruitment"], "Grupo", ""))
+
+
+df_silverG.select(['Id', 'Nivel', 'Grupo recruitment', 'dias_trabajados']).show(4)
+| Id|Nivel|Grupo recruitment|dias_trabajados|
++---+-----+-----------------+---------------+
+|  4|    2|                A|           1119|
+|  7|    4|                A|            268|
+|  8|    3|                A|           1640|
+| 10|    4|                A|           1365|
++---+-----+-----------------+---------------+
+only showing top 4 rows
+
+# RENOMBRO LA COLUMNA  TIEMPO DE RECRUITMENT   A   TIEMPO DE RECRUITMENT EN SEMANAS
+# Deberia consultar si ese tiempo son semanas dias o meses
+# Pero considero pertinente aclarar la medida
+
+df_silverTR = df_silverG.withColumnRenamed("Tiempo recruitment", "Tiempo recruitment en semanas")
+
+# LA CASTEO A INT
+df_silverTR = df_silverTR.withColumn("Tiempo recruitment en semanas", df_silverTR["Tiempo recruitment en semanas"].cast("int"))
+
+
+# EXPLORO LAS COLUMNAS QUE DICEN RANGO
+
+df_silverTR.select(['Rango Salarial', 'Rango', 'RS competencia']).show(4)
+
+|Rango Salarial|  Rango|RS competencia|
++--------------+-------+--------------+
+|       Rango 2|Rango 2|       Rango 2|
+|       Rango 4|Rango 4|       Rango 4|
+|       Rango 3|Rango 3|       Rango 3|
+|       Rango 3|Rango 3|       Rango 3|
++--------------+-------+--------------+
+only showing top 4 rows
+
+
+ 
+# REMUEVEMO LA COLUMNA DUPLICADA
+
+df_RS = df_silverTR.drop('Rango')
+
+# SAC0 LA PALABRA RANGO
+# ADEMAS PASO LOS SUELDOS A PROMEDIO PARA TENER UN SOLO NUMERO Y NO DOS
+
+df_RS = df_RS \
+... .withColumn("Rango Salarial", regexp_replace(df_RS["Rango Salarial"], "Rango", "")) \
+... .withColumn("RS compentencia", regexp_replace(df_RS["RS competencia"], "Rango", "")) \
+... .withColumn("avg salario en rublos", (df_RS["sueldo en rublos desde"] + df_RS["sueldo en rublos hasta"]) / 2)
+
+
+# REVISO QUE SE HAYA CREADO LA COLUMNA
+df_RS.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- RS compentencia: string (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+# CAST A INT
+# En el medio tuve harto problema porque la columna 'RS compentencia' estaba repetida
+
+
+df_RS2 = df_RS2 \
+... .withColumn("Rango Salarial", df_RS2["Rango Salarial"].cast("int")) \
+... .withColumn("RS competencia", df_RS2["RS competencia"].cast("int")) 
+
+df_RS3 = df_RS2 \
+... .withColumn("sueldo en rublos desde", df_RS2["sueldo en rublos desde"].cast("int")) \
+... .withColumn("sueldo en rublos hasta", df_RS2["sueldo en rublos hasta"].cast("int"))
+
+
+# REALIZO UNA COLUMNA PROMEDIO PARA SALARIO EN RUBLOS
+# Utilize Rublos porque me parecio divertido
+# Pero me parecio importante aclarar en que era el sueldo
+
+df_RS4 = df_RS3.withColumn("avg salario en rublos", (df_RS3["sueldo en rublos desde"] + df_RS3["sueldo en rublos hasta"]) / 2)
+df_RS4.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: integer (nullable = true)
+ |-- RS competencia: integer (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: integer (nullable = true)
+ |-- sueldo en rublos hasta: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+
+# CREO TRES TABLAS
+# UNA PARA CADA GRUPO DE RECRUITMENT
+# En esta parte sufri en demasia
+# El problema era que Grupo recruitment tenia espacios en blanco, entonces 'A' no era igual a ' A'
+
+from pyspark.sql.functions import col, trim
+
+df_silver = df_RS4
+df_silver = df_silver.withColumn('Grupo recruitment', trim(col('Grupo recruitment')))
+grupoA = df_silver.filter(df_silver['Grupo recruitment'] == 'A')
+grupoA.show()
++---+---------+---------+----------+--------------+----------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
+| Id|   Nombre| Apellido|      Area|Fecha comienzo| Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment en semanas|Rango Salarial|RS competencia|Manager|Realizo Cursos|Id_Manager|Nombre_Manager|Apellido_Manager|sueldo en rublos desde|sueldo en rublos hasta|dias_trabajados|avg salario en rublos|
++---+---------+---------+----------+--------------+----------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
+|  4|Sebastian| González|   Legales|    2018-05-07|2021-05-30|    2|                A|                            4|             2|             2|      3|            SI|         3|          José|        Feligres|                200001|                250000|           1119|             225000.5|
+|  7| Anabella|Fernández|    Ventas|    2020-07-06|2021-03-31|    4|                A|                            3|             4|             4|      8|            NO|         8|       Ricardo|         Ronaldo|                300001|                350000|            268|             325000.5|
+|  8|Francesca|    López|   Compras|    2017-01-02|2021-06-30|    3|                A|                            4|             3|             3|      2|            SI|         2|        Marina|          Pitana|                250001|                300000|           1640|             275000.5|
+| 10|      Ana|     Diaz|        IT|    2017-03-06|2020-11-30|    4|                A|                            3|             3|             3|      7|            NO|         7|        Martín|          Viglia|                250001|                300000|           1365|             275000.5|
+| 13|Alejandro|   Romero|        IT|    2020-06-01|2022-02-28|    3|                A|                            3|             4|             3|      7|            SI|         7|        Martín|          Viglia|                300001|                350000|            637|             325000.5|
+| 15|   Analia|     Sosa|   Compras|    2018-10-01|2021-11-30|    4|                A|                            4|             4|             4|      2|            NO|         2|        Marina|          Pitana|                300001|                350000|           1156|             325000.5|
+| 17|Guillermo|  Ramírez|        IT|    2020-01-06|2022-05-31|    2|                A|                            3|             2|             2|      7|            NO|         7|        Martín|          Viglia|                200001|                250000|            876|             225000.5|
+| 19|    Rocio|     Ruiz| Auditoria|    2018-02-05|2021-01-30|    4|                A|                            4|             4|             5|     10|            NO|        10|        Daniel|         Quiroga|                300001|                350000|           1090|             325000.5|
+| 24|  Micaela|    Pauls|Producción|    2019-01-07|2021-12-31|    6|                A|                            5|             6|             6|      4|            SI|         4|        Miriam|          Pisani|                400001|                500000|           1089|             450000.5|
+| 27|  Rodrigo|  Molinas|   Compras|    2019-06-03|2022-04-30|    2|                A|                            4|             2|             2|      2|            SI|         2|        Marina|          Pitana|                200001|                250000|           1062|             225000.5|
+| 28|  Martina| Oliviera|Producción|    2020-01-06|2022-06-30|    7|                A|                            4|             6|             6|      6|            SI|         6|         Sonia|        Kamlasky|                400001|                500000|            906|             450000.5|
++---+---------+---------+----------+--------------+----------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
+
+grupoA = df_silver.filter(df_silver['Grupo recruitment'] == 'A')
+grupoB = df_silver.filter(df_silver['Grupo recruitment'] == 'B')
+grupoC = df_silver.filter(df_silver['Grupo recruitment'] == 'C')
+grupoD = df_silver.filter(df_silver['Grupo recruitment'] == 'D')
+
+# Me aseguro que no se me este escapando un grupo D
+grupoD.show()
++---+------+--------+----+--------------+---------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
+| Id|Nombre|Apellido|Area|Fecha comienzo|Fecha fin|Nivel|Grupo recruitment|Tiempo recruitment en semanas|Rango Salarial|RS competencia|Manager|Realizo Cursos|Id_Manager|Nombre_Manager|Apellido_Manager|sueldo en rublos desde|sueldo en rublos hasta|dias_trabajados|avg salario en rublos|
++---+------+--------+----+--------------+---------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
++---+------+--------+----+--------------+---------+-----+-----------------+-----------------------------+--------------+--------------+-------+--------------+----------+--------------+----------------+----------------------+----------------------+---------------+---------------------+
+
+
+# CHEQUEO LAS TABLAS
+
+df_bronze.printSchema()
+root
+ |-- Id: string (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: string (nullable = true)
+ |-- Fecha fin: string (nullable = true)
+ |-- Nivel: string (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment: string (nullable = true)
+ |-- Rango Salarial: string (nullable = true)
+ |-- RS competencia: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Rango: string (nullable = true)
+ |-- sueldo en rublos desde: string (nullable = true)
+ |-- sueldo en rublos hasta: string (nullable = true)
+
+df_silver.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: integer (nullable = true)
+ |-- RS competencia: integer (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: integer (nullable = true)
+ |-- sueldo en rublos hasta: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+grupoA.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: integer (nullable = true)
+ |-- RS competencia: integer (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: integer (nullable = true)
+ |-- sueldo en rublos hasta: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+grupoB.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Fecha comienzo: date (nullable = true)
+ |-- Fecha fin: date (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- Grupo recruitment: string (nullable = true)
+ |-- Tiempo recruitment en semanas: integer (nullable = true)
+ |-- Rango Salarial: integer (nullable = true)
+ |-- RS competencia: integer (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Realizo Cursos: string (nullable = true)
+ |-- Id_Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- sueldo en rublos desde: integer (nullable = true)
+ |-- sueldo en rublos hasta: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+
+# Me parece mucho pasarle todas las columnas a los grupos de recruitment, voy a seleccionar
+
+df_A = grupoA.select(['Id', 'Nombre', 'Apellido', 'Area', 'Manager', 'Nombre_Manager', 'Apellido_Manager', 'Nivel', 'dias_trabajados', 'avg salario en rublos'])
+df_B = grupoB.select(['Id', 'Nombre', 'Apellido', 'Area', 'Manager', 'Nombre_Manager', 'Apellido_Manager', 'Nivel', 'dias_trabajados', 'avg salario en rublos'])
+df_C = grupoC.select(['Id', 'Nombre', 'Apellido', 'Area', 'Manager', 'Nombre_Manager', 'Apellido_Manager', 'Nivel', 'dias_trabajados', 'avg salario en rublos'])
+
+df_A.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+df_B.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+df_C.printSchema()
+root
+ |-- Id: integer (nullable = true)
+ |-- Nombre: string (nullable = true)
+ |-- Apellido: string (nullable = true)
+ |-- Area: string (nullable = true)
+ |-- Manager: string (nullable = true)
+ |-- Nombre_Manager: string (nullable = true)
+ |-- Apellido_Manager: string (nullable = true)
+ |-- Nivel: integer (nullable = true)
+ |-- dias_trabajados: integer (nullable = true)
+ |-- avg salario en rublos: double (nullable = true)
+
+
+# WRITE EN HIVE
+
+df_bronze.write.insertInto("edvai_rrhh.bronze")
+2024-05-08 20:50:34,140 WARN conf.HiveConf: HiveConf of name hive.metastore.local does not exist
+2024-05-08 20:50:35,886 WARN session.SessionState: METASTORE_FILTER_HOOK will be ignored, since hive.security.authorization.manager is set to instance of HiveAuthorizerFactory.
+df_silver.write.insertInto("edvai_rrhh.silver")                 
+df_A.write.insertInto("edvai_rrhh.grupo_a")                     
+df_B.write.insertInto("edvai_rrhh.grupo_b")                               
+df_C.write.insertInto("edvai_rrhh.grupo_c")
+                                       

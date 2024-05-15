@@ -1,0 +1,44 @@
+# Copy files/folders between a container and the local filesystem
+
+# Copie uno por uno, no se por que no podia copiar todos juntos
+
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/Managers.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 2.05kB to edvai_hadoop:/home/hadoop/landing
+
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/Rangos.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 2.05kB to edvai_hadoop:/home/hadoop/landing
+
+nico@home:~$ sudo docker cp /home/nico/Documents/edvai/EVDVai_DataEng/semana5/RowData.csv edvai_hadoop:/home/hadoop/landing
+Successfully copied 4.61kB to edvai_hadoop:/home/hadoop/landing
+
+
+# INGRESO AL AMBIENTE hadoop
+
+nico@home:~$ sudo docker exec -it edvai_hadoop bash
+root@7e7bdeaf0621:/# su hadoop
+
+hadoop@7e7bdeaf0621:/$ ls /home/hadoop/landing/
+Managers.csv  RowData.csv                   yellow_tripdata_2021-01.csv
+Rangos.csv    Utimas_Desvinculaciones.xlsx
+
+# tal vez debi borrar los archivos de landing antes
+hadoop@7e7bdeaf0621:/$ rm /home/hadoop/landing/yellow_tripdata_2021-01.csv /home/hadoop/landing/Utimas_Desvinculaciones.xlsx 
+
+hadoop@7e7bdeaf0621:/$ ls /home/hadoop/landing/
+Managers.csv  Rangos.csv  RowData.csv
+
+hadoop@7e7bdeaf0621:/$ hdfs dfs -put /home/hadoop/landing/* /ingest
+
+hadoop@7e7bdeaf0621:/$ hdfs dfs -ls /ingest
+
+# Otra vez, tal vez debi borrar los archivos de ingest antes
+# Pero algo me dice que los voy a necesitar despues...
+
+Found 5 items
+-rw-r--r--   1 hadoop supergroup        202 2024-05-08 15:19 /ingest/Managers.csv
+-rw-r--r--   1 hadoop supergroup        249 2024-05-08 15:19 /ingest/Rangos.csv
+-rw-r--r--   1 hadoop supergroup       2611 2024-05-08 15:19 /ingest/RowData.csv
+-rw-r--r--   1 hadoop supergroup      10657 2024-05-08 14:14 /ingest/Utimas_Desvinculaciones.xlsx
+-rw-r--r--   1 hadoop supergroup  125981363 2022-05-09 17:58 /ingest/yellow_tripdata_2021-01.csv
+
+# Tengo este archivo Utimas_Desvinculaciones.xlsx que no pude abrirlo con spark, por eso pase todo a csv
