@@ -1,0 +1,9 @@
+create external table airport_trips(tpep_pickup_datetetime DATE, airport_fee FLOAT, payment_type STRING, tolls_amount FLOAT,
+total_amount FLOAT)
+    -- row format delimited
+    -- fields terminated by ','
+    -- location '/tables/external/tripdata';
+
+describe formatted airport_trips;
+
+
