@@ -1,9 +1,19 @@
-df1 = spark.read.option("header", "true").csv("/ingest/results.csv") 
-df2 = spark.read.option("header", "true").csv("/ingest/drivers.csv")
-df3 = spark.read.option("header", "true").csv("/ingest/constructors.csv")
-df4 = spark.read.option("header", "true").csv("/ingest/races.csv")
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+from pyspark.sql import HiveContext
 
+# Configuramos...
+sc = SparkContext('local')
+spark = SparkSession(sc)
+hc = HiveContext(sc)
 
+# Traemos tablas
+df1 = spark.read.option("header", "true").csv("hdfs://172.17.0.2:9000/ingest/results.csv") 
+df2 = spark.read.option("header", "true").csv("hdfs://172.17.0.2:9000/ingest/drivers.csv")
+df3 = spark.read.option("header", "true").csv("hdfs://172.17.0.2:9000/ingest/constructors.csv")
+df4 = spark.read.option("header", "true").csv("hdfs://172.17.0.2:9000/ingest/races.csv")
+
+# Preparamos la primera transformacion
 df1.createOrReplaceTempView("results")
 df2.createOrReplaceTempView("drivers")
 
@@ -19,15 +29,13 @@ driver_results = spark.sql("""
         """)
 
 
-driver_results.show()
-
-
+# Preparamos la segunda transformacion
 df3.createOrReplaceTempView("constructors")
 df4.createOrReplaceTempView("races")
 
 SpanishGP = spark.sql("""
     SELECT 
-        CAST(c.constructorRef AS STRING) AS constructorRef, 
+        CAST(c.constructorRef AS STRING) AS constructorref, 
         CAST(c.name AS STRING) AS cons_name, 
         CAST(c.nationality AS STRING) AS cons_nationality, 
         CAST(c.url AS STRING) AS url,
@@ -40,5 +48,6 @@ SpanishGP = spark.sql("""
 
 SpanishGP.show(3)
 
+# Insertamos las tablas
 driver_results.write.insertInto("f1.driver_results")
 SpanishGP.write.insertInto("f1.constructor_results") 
