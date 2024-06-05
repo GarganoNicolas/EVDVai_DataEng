@@ -1,0 +1,4 @@
+export PROJECT_ID=$(gcloud info --format='value(config.project)')
+export SUPERSET_KEY=$(openssl rand -hex 32)
+export YOUR_ACCESS_KEY_ID=$(openssl rand -hex 32)
+export YOUR_ACCESS_KEY_ID=$(openssl rand -hex 32)
