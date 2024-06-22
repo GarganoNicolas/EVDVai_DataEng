@@ -1,0 +1,54 @@
+create database administracionNacionalDeAviacionCivil;
+
+use administracionNacionalDeAviacionCivil;
+
+create external table aeropuerto_tabla(
+        fecha DATE,
+        horaUTC STRING,
+        clase_de_vuelo STRING,
+        clasificacion_de_vuelo STRING,
+        tipo_de_movimiento STRING,
+        aeropuerto STRING,
+        origen_destino STRING,
+        aerolinea_nombre STRING,
+        aeronave STRING,
+        pasajeros INT
+        )
+    -- row format delimited
+    -- fields terminated by ','
+    -- location '/tables/external/tripdata';
+    ;
+
+
+describe formatted aeropuerto_tabla;
+
+
+
+create external table aeropuerto_detalles_tabla(
+        aeropuerto STRING,
+        oac STRING,
+        iata STRING,
+        tipo STRING,
+        denominacion STRING,
+        coordenadas STRING,
+        latitud STRING,
+        longitud STRING,
+        elev FLOAT,
+        uom_elev STRING,
+        ref STRING,
+        distancia_ref FLOAT,
+        direccion_ref STRING,
+        condicion STRING,
+        control STRING,
+        region STRING,
+        uso_trafico STRING,
+        sna STRING,
+        concesionado STRING,
+        provincia STRING
+        )
+    -- row format delimited
+    -- fields terminated by ','
+    -- location '/tables/external/tripdata';
+    ;
+
+describe formatted aeropuerto_detalles_tabla;

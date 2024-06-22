@@ -1,0 +1,8 @@
+https://sicarul.substack.com/p/gotta-catch-em-all-pokemon-with-meltano
+
+https://github.com/sicarul/tap-pokemon
+https://hub.meltano.com/
+
+https://docs.meltano.com/tutorials/custom-extractor
+
+https://automate-dv.readthedocs.io/en/latest/

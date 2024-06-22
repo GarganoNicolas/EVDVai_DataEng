@@ -1,0 +1,25 @@
+create database car_rental_db;
+
+use car_rental_db;
+
+create external table car_rental_analytics(
+        fuelType STRING,
+        rating INT,
+        renterTripsTaken INT,
+        reviewCount INT,
+        city STRING,
+        state_name STRING,
+        owner_id INT,
+        rate_daily INT,
+        make STRING,
+        model STRING,
+        year INT
+        )
+    -- row format delimited
+    -- fields terminated by ','
+    -- location '/tables/external/tripdata';
+    ;
+
+
+describe formatted car_rental_analytics;
+

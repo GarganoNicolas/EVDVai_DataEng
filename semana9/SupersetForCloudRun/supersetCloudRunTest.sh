@@ -45,6 +45,7 @@ gcloud run deploy superset \
   --region=us-central1 \
   --port=8088 \
   --allow-unauthenticated \
-  --set-env-vars SUPERSET_SECRET_KEY=$SUPERSET_KEY
+  --set-env-vars SUPERSET_SECRET_KEY=$SUPERSET_KEY \
+  --min-instances=1
 
 
